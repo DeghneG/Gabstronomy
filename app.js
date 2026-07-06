@@ -313,11 +313,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Place featured first, rest normal
     const featured = filtered.filter(d => d.featured);
     const regular = filtered.filter(d => !d.featured);
-    if (featured.length > 0) {
-      track.appendChild(createDishCard(featured[0], 0, 'gallery'));
-    }
-    const rest = [...featured.slice(1), ...regular];
-    rest.forEach((d, i) => track.appendChild(createDishCard(d, featured.length > 0 ? i + 1 : i, 'gallery')));
+    
+    const renderSet = () => {
+      if (featured.length > 0) {
+        track.appendChild(createDishCard(featured[0], 0, 'gallery'));
+      }
+      const rest = [...featured.slice(1), ...regular];
+      rest.forEach((d, i) => track.appendChild(createDishCard(d, featured.length > 0 ? i + 1 : i, 'gallery')));
+    };
+
+    // Render twice for seamless perpetual motion looping
+    renderSet();
+    renderSet();
     
     updateGalleryScale();
   }
@@ -385,6 +392,39 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
       }
     }, { capture: true });
+    
+    // Perpetual Motion
+    let exactScroll = 0;
+    let scrollSpeed = 0.5; // pixels per frame
+    let isHovered = false;
+    let animationId;
+    
+    function startPerpetualMotion() {
+      if (animationId) cancelAnimationFrame(animationId);
+      
+      function step() {
+        if (!isHovered && !isDown && galleryCarousel.style.display !== 'none') {
+          exactScroll += scrollSpeed;
+          if (exactScroll >= 1) {
+            const increment = Math.floor(exactScroll);
+            galleryCarousel.scrollLeft += increment;
+            exactScroll -= increment;
+            
+            // Loop back to start seamlessly
+            if (galleryCarousel.scrollLeft >= galleryCarousel.scrollWidth / 2) {
+              galleryCarousel.scrollLeft -= (galleryCarousel.scrollWidth / 2);
+            }
+          }
+        }
+        animationId = requestAnimationFrame(step);
+      }
+      animationId = requestAnimationFrame(step);
+    }
+    
+    galleryCarousel.addEventListener('pointerenter', () => isHovered = true);
+    galleryCarousel.addEventListener('pointerleave', () => isHovered = false);
+    
+    startPerpetualMotion();
   }
 
   renderGallery();

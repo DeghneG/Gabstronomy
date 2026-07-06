@@ -175,7 +175,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery__counter{max-width:var(--container);margin:0 auto;padding:0 var(--gutter) 1.5rem;font-size:.8125rem;font-weight:500;color:var(--ink-t)}
 .gallery__indicator{text-align:right;max-width:var(--container);margin:0 auto;padding:0 var(--gutter);font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-s);margin-bottom:.5rem;animation:pulse 2s infinite ease-in-out}
 @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
-.gallery__carousel{width:100vw;max-width:100%;overflow-x:auto;padding:2rem 0 4rem;margin-left:calc(-50vw + 50%);position:relative;background:var(--surf);-ms-overflow-style:none;scrollbar-width:none;scroll-behavior:smooth}
+.gallery__carousel{width:100vw;max-width:100%;overflow-x:auto;padding:2rem 0 4rem;margin-left:calc(-50vw + 50%);position:relative;background:var(--surf);-ms-overflow-style:none;scrollbar-width:none}
 .gallery__carousel::-webkit-scrollbar{display:none}
 .gallery__track{display:flex;align-items:center;width:max-content;gap:0;padding:0}
 .gallery__empty{max-width:var(--container);margin:0 auto;padding:4rem var(--gutter);text-align:center}
