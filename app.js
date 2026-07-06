@@ -153,8 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `;
-    card.addEventListener('click', () => openModal(dish));
-    card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish); });
+    card.addEventListener('click', (e) => {
+      if (dragDist > 5) return; // Prevent click if dragging
+      openModal(dish, card.querySelector('.dish-card__image-wrap'));
+    });
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.dish-card__image-wrap')); });
     
     // --- Canvas Ripple Logic ---
     const canvas = card.querySelector('canvas');
@@ -258,32 +261,95 @@ document.addEventListener('DOMContentLoaded', () => {
     return card;
   }
 
+  let carouselScroll = 0;
+  let carouselRAF = null;
+  let isHoveringCarousel = false;
+  let isDraggingCarousel = false;
+  let dragStartX = 0;
+  let dragDist = 0;
+
   function renderGallery() {
-    const grid = $('#gallery-grid');
+    const track = $('#gallery-track');
+    if (!track) return;
     const empty = $('#gallery-empty');
     const counter = $('#gallery-count');
     const filtered = filterDishes(DISHES, state.galleryFilters);
 
-    grid.innerHTML = '';
+    track.innerHTML = '';
     if (filtered.length === 0) {
-      grid.style.display = 'none';
+      $('#gallery-carousel').style.display = 'none';
       empty.hidden = false;
       counter.textContent = '0';
+      if (carouselRAF) cancelAnimationFrame(carouselRAF);
       return;
     }
-    grid.style.display = '';
+    $('#gallery-carousel').style.display = '';
     empty.hidden = true;
     counter.textContent = filtered.length;
 
-    // Place featured first as full-width, rest normal
-    const featured = filtered.filter(d => d.featured);
-    const regular = filtered.filter(d => !d.featured);
+    // Append 3 sets for infinite wrap
+    const renderSet = () => {
+      filtered.forEach((d, i) => track.appendChild(createDishCard(d, i, 'gallery')));
+    };
+    renderSet(); renderSet(); renderSet();
+    
+    startCarouselEngine(track, filtered.length);
+  }
 
-    if (featured.length > 0) {
-      grid.appendChild(createDishCard(featured[0], 0, 'gallery'));
+  function startCarouselEngine(track, setLength) {
+    if (carouselRAF) cancelAnimationFrame(carouselRAF);
+    const cards = Array.from(track.children);
+    if (cards.length === 0) return;
+
+    track.addEventListener('mouseenter', () => isHoveringCarousel = true);
+    track.addEventListener('mouseleave', () => { isHoveringCarousel = false; isDraggingCarousel = false; });
+    track.addEventListener('mousedown', (e) => {
+      isDraggingCarousel = true;
+      dragStartX = e.clientX;
+      dragDist = 0;
+    });
+    window.addEventListener('mouseup', () => { setTimeout(() => isDraggingCarousel = false, 50); });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDraggingCarousel) return;
+      const dx = e.clientX - dragStartX;
+      carouselScroll -= dx;
+      dragDist += Math.abs(dx);
+      dragStartX = e.clientX;
+    });
+
+    function loop() {
+      if (!cards[0]) return;
+      const cardRect = cards[0].getBoundingClientRect();
+      const style = window.getComputedStyle(track);
+      const gap = parseFloat(style.gap) || 0;
+      
+      const itemWidth = cardRect.width + gap;
+      const setWidth = itemWidth * setLength;
+      
+      if (!isHoveringCarousel && !isDraggingCarousel) {
+        carouselScroll += 1.2;
+      }
+      
+      if (carouselScroll >= setWidth) carouselScroll -= setWidth;
+      else if (carouselScroll < 0) carouselScroll += setWidth;
+      
+      track.style.transform = `translateX(${-carouselScroll}px)`;
+      
+      const vw = window.innerWidth;
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const center = rect.left + rect.width / 2;
+        let progress = center / vw;
+        progress = Math.max(0, Math.min(1, progress));
+        
+        // Scale increases from left (0.7) to right (1.1)
+        const scale = 0.7 + (progress * 0.4);
+        card.style.setProperty('--scale', scale.toFixed(3));
+      });
+      
+      carouselRAF = requestAnimationFrame(loop);
     }
-    const rest = [...featured.slice(1), ...regular];
-    rest.forEach((d, i) => grid.appendChild(createDishCard(d, featured.length > 0 ? i + 1 : i, 'gallery')));
+    carouselRAF = requestAnimationFrame(loop);
   }
 
   renderGallery();
@@ -293,39 +359,60 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalBackdrop = $('#modal-backdrop');
   const modalClose = $('#modal-close');
 
-  function openModal(dish) {
-    $('#modal-image').src = dish.image;
-    $('#modal-image').alt = dish.name;
-    $('#modal-cuisine').textContent = dish.cuisine;
-    $('#modal-method').textContent = dish.cookingMethod;
-    $('#modal-time').textContent = dish.cookTime;
-    $('#modal-title').textContent = dish.name;
-    $('#modal-tagline').textContent = dish.tagline;
+  function openModal(dish, element) {
+    const doOpen = () => {
+      $('#modal-image').src = dish.image;
+      $('#modal-image').alt = dish.name;
+      $('#modal-cuisine').textContent = dish.cuisine;
+      $('#modal-method').textContent = dish.cookingMethod;
+      $('#modal-time').textContent = dish.cookTime;
+      $('#modal-title').textContent = dish.name;
+      $('#modal-tagline').textContent = dish.tagline;
+      
+      const ingList = $('#modal-ingredients');
+      ingList.innerHTML = '';
+      dish.ingredients.forEach(i => {
+        const li = document.createElement('li');
+        li.textContent = i.charAt(0).toUpperCase() + i.slice(1);
+        ingList.appendChild(li);
+      });
+      
+      const stepList = $('#modal-steps');
+      stepList.innerHTML = '';
+      dish.steps.forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = s;
+        stepList.appendChild(li);
+      });
 
-    const ingList = $('#modal-ingredients');
-    ingList.innerHTML = '';
-    dish.ingredients.forEach(i => {
-      const li = document.createElement('li');
-      li.textContent = i.charAt(0).toUpperCase() + i.slice(1);
-      ingList.appendChild(li);
-    });
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      modalClose.focus();
+    };
 
-    const stepList = $('#modal-steps');
-    stepList.innerHTML = '';
-    dish.steps.forEach(s => {
-      const li = document.createElement('li');
-      li.textContent = s;
-      stepList.appendChild(li);
-    });
-
-    modal.hidden = false;
-    document.body.style.overflow = 'hidden';
-    modalClose.focus();
+    if (element && document.startViewTransition) {
+      element.style.viewTransitionName = 'active-dish';
+      const transition = document.startViewTransition(() => {
+        element.style.viewTransitionName = '';
+        doOpen();
+      });
+    } else {
+      doOpen();
+    }
   }
 
   function closeModal() {
-    modal.hidden = true;
-    document.body.style.overflow = '';
+    const doClose = () => {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      $('#modal-image').src = '';
+    };
+
+    if (document.startViewTransition) {
+      document.startViewTransition(() => doClose());
+    } else {
+      doClose();
+    }
   }
 
   modalClose.addEventListener('click', closeModal);
