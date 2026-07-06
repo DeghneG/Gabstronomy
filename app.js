@@ -297,11 +297,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render once
     renderSet();
     
-    updateGalleryScale();
+    // Wait for layout to be calculated before first scale update
+    requestAnimationFrame(() => {
+      updateGalleryScale();
+    });
+    });
   }
 
   function updateGalleryScale() {
-    // Intentionally empty to maintain uniform card sizes
+    const track = $('#gallery-track');
+    if (!track) return;
+    const cards = Array.from(track.children);
+    const vw = window.innerWidth;
+    const isDesktop = vw >= 768;
+    const baseWidth = isDesktop ? 340 : 280;
+    const baseHeight = isDesktop ? 480 : 400;
+    
+    // Read phase: get all rects first to avoid layout thrashing
+    const rects = cards.map(card => card.getBoundingClientRect());
+    
+    // Write phase: set dimensions exactly so they touch edge-to-edge
+    cards.forEach((card, i) => {
+      const rect = rects[i];
+      const center = rect.left + rect.width / 2;
+      let progress = center / vw;
+      progress = Math.max(0, Math.min(1, progress));
+      
+      // Left is small (0.6), Right is big (1.0)
+      const scale = 0.6 + (progress * 0.4);
+      card.style.flex = `0 0 ${baseWidth * scale}px`;
+      card.style.height = `${baseHeight * scale}px`;
+    });
   }
 
   const galleryCarousel = $('#gallery-carousel');
