@@ -3,6 +3,43 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // --- PRELOADER & HERO ENTRANCE ---
+  const preloader = document.getElementById('preloader');
+  const counterEl = document.getElementById('preloader-counter');
+  
+  const hasSeenPreloader = sessionStorage.getItem('gabstronomy_preloader');
+  
+  if (!hasSeenPreloader && preloader) {
+    // Run preloader sequence
+    document.body.style.overflow = 'hidden';
+    
+    // Simulate fast loading percentage
+    let count = 0;
+    const countInterval = setInterval(() => {
+      count += Math.floor(Math.random() * 10) + 5;
+      if (count > 100) count = 100;
+      counterEl.textContent = String(count).padStart(3, '0') + '%';
+      
+      if (count === 100) {
+        clearInterval(countInterval);
+        setTimeout(() => {
+          preloader.classList.add('is-hidden');
+          setTimeout(() => {
+            document.body.classList.add('start-hero');
+            document.body.style.overflow = '';
+            sessionStorage.setItem('gabstronomy_preloader', 'true');
+          }, 800); // Wait for curtain lift
+        }, 400); // Hold at 100% briefly
+      }
+    }, 50);
+  } else if (preloader) {
+    // Skip preloader
+    preloader.style.display = 'none';
+    document.body.classList.add('start-hero');
+  } else {
+    document.body.classList.add('start-hero');
+  }
+
   // ---- STATE ----
   const state = {
     galleryFilters: { cuisine: null, meal: null, method: null },
@@ -339,7 +376,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const lower = name.toLowerCase().trim();
     if (!lower || state.finderIngredients.includes(lower)) return;
     state.finderIngredients.push(lower);
-    renderFinderTags();
+    
+    // Create and append tag directly
+    const tag = document.createElement('span');
+    tag.className = 'finder__tag tag-enter';
+    tag.dataset.ing = lower;
+    tag.innerHTML = `${lower}<button class="finder__tag-remove" aria-label="Remove ${lower}"><svg viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`;
+    tag.querySelector('button').addEventListener('click', e => { e.stopPropagation(); removeIngredient(lower); });
+    finderTags.appendChild(tag);
+    
+    if (state.finderIngredients.length > 0) finderClear.classList.add('is-active');
+    
     debouncedRenderResults();
     finderSearch.value = '';
     hideAC();
@@ -348,15 +395,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeIngredient(name) {
     state.finderIngredients = state.finderIngredients.filter(i => i !== name);
-    renderFinderTags();
+    
+    // Find DOM node and animate out
+    const tagEl = Array.from(finderTags.children).find(el => el.dataset.ing === name);
+    if (tagEl) {
+      tagEl.classList.remove('tag-enter');
+      tagEl.classList.add('tag-exit');
+      tagEl.addEventListener('animationend', () => {
+        tagEl.remove();
+        if (state.finderIngredients.length === 0) finderClear.classList.remove('is-active');
+      });
+    } else {
+      if (state.finderIngredients.length === 0) finderClear.classList.remove('is-active');
+    }
+    
     debouncedRenderResults();
   }
 
   function renderFinderTags() {
+    // Only used on initial load or clear all
     finderTags.innerHTML = '';
     state.finderIngredients.forEach(ing => {
       const tag = document.createElement('span');
-      tag.className = 'finder__tag';
+      tag.className = 'finder__tag tag-enter';
+      tag.dataset.ing = ing;
       tag.innerHTML = `${ing}<button class="finder__tag-remove" aria-label="Remove ${ing}"><svg viewBox="0 0 10 10" fill="none"><path d="M2 2l6 6M8 2l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`;
       tag.querySelector('button').addEventListener('click', e => { e.stopPropagation(); removeIngredient(ing); });
       finderTags.appendChild(tag);
@@ -371,7 +433,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   finderClear.addEventListener('click', () => {
     state.finderIngredients = [];
-    renderFinderTags();
+    const tags = Array.from(finderTags.children);
+    tags.forEach(tag => {
+      tag.classList.remove('tag-enter');
+      tag.classList.add('tag-exit');
+      tag.addEventListener('animationend', () => tag.remove());
+    });
+    finderClear.classList.remove('is-active');
     debouncedRenderResults();
   });
 
@@ -467,10 +535,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // createResultCard removed, reusing createDishCard
 
+  // Animate counter text logic
+  let currentCounterTotal = -1; // track last total to animate from
+  
+  function animateFinderCounter(newTotal, newHTMLString) {
+    const el = $('#finder-count-text');
+    if (!el) return;
+    
+    // If it's complex text (like "1 exact · 2 near"), just fade crossfade it
+    // If it's a simple number jump and we have a valid previous number, we could number-spin. 
+    // Given the text format can change drastically ("0 matches", "5 dishes", "1 exact"), a fade transition is much cleaner.
+    
+    el.style.transition = 'opacity 0.2s';
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.innerHTML = newHTMLString;
+      el.style.opacity = '1';
+    }, 200);
+  }
+
   function renderFinderResults() {
     if (state.finderIngredients.length === 0) {
       finderSection.classList.remove('has-results');
-      finderResults.innerHTML = '';
+      // Exit animate all current results
+      const currentCards = Array.from(finderResults.children);
+      currentCards.forEach(card => {
+        card.classList.remove('result-enter');
+        card.classList.add('result-exit');
+        card.addEventListener('animationend', () => card.remove());
+      });
+      
       finderEmpty.hidden = false;
       const emptyTitle = finderEmpty.querySelector('.finder__empty-title');
       const emptySub = finderEmpty.querySelector('.finder__empty-sub');
@@ -480,6 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (samplesEl) samplesEl.hidden = false;
       finderCounter.hidden = true;
       finderFiltersEl.hidden = true;
+      currentCounterTotal = -1;
       return;
     }
 
@@ -488,12 +583,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const { exact, near } = matchDishes();
     const total = exact.length + near.length;
 
-    finderResults.innerHTML = '';
     finderEmpty.hidden = total > 0;
     finderCounter.hidden = false;
 
     if (total === 0) {
-      // Show closest partial matches
+      // Exit animate all current results
+      Array.from(finderResults.children).forEach(card => {
+        card.classList.remove('result-enter');
+        card.classList.add('result-exit');
+        card.addEventListener('animationend', () => card.remove());
+      });
+      
       finderEmpty.hidden = false;
       const emptyTitle = finderEmpty.querySelector('.finder__empty-title');
       const emptySub = finderEmpty.querySelector('.finder__empty-sub');
@@ -501,7 +601,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (emptySub) emptySub.textContent = 'Try adding more core ingredients like a protein, grain, or vegetable.';
       const samplesEl = $('#finder-samples');
       if (samplesEl) samplesEl.hidden = true;
-      $('#finder-count-text').innerHTML = `<strong>0</strong> dishes match your ingredients`;
+      animateFinderCounter(0, `<strong>0</strong> dishes match your ingredients`);
+      currentCounterTotal = 0;
       return;
     }
 
@@ -514,16 +615,43 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       counterText = `<strong>${near.length}</strong> dish${near.length !== 1 ? 'es' : ''} — missing 1–2 ingredients`;
     }
-    $('#finder-count-text').innerHTML = counterText;
+    animateFinderCounter(total, counterText);
+    currentCounterTotal = total;
 
-    // Render cards
-    // Render cards
+    // Diff rendering for DOM cards
+    const desiredDishes = [...exact, ...near].map(e => e.dish.id);
+    const currentCards = Array.from(finderResults.children);
+    
+    // Remove ones that shouldn't be here
+    currentCards.forEach(card => {
+      if (!desiredDishes.includes(card.dataset.id) && !card.classList.contains('result-exit')) {
+        card.classList.remove('result-enter');
+        card.classList.add('result-exit');
+        card.addEventListener('animationend', () => card.remove());
+      }
+    });
+
+    // Add new ones
     let globalIndex = 0;
+    const existingIds = currentCards.filter(c => !c.classList.contains('result-exit')).map(c => c.dataset.id);
+    
     exact.forEach(e => {
-      finderResults.appendChild(createDishCard(e.dish, globalIndex++, 'finder', { type: 'exact', missing: [] }));
+      if (!existingIds.includes(e.dish.id)) {
+        const card = createDishCard(e.dish, globalIndex, 'finder', { type: 'exact', missing: [] });
+        card.dataset.id = e.dish.id;
+        card.classList.add('result-enter');
+        finderResults.appendChild(card);
+      }
+      globalIndex++;
     });
     near.forEach(e => {
-      finderResults.appendChild(createDishCard(e.dish, globalIndex++, 'finder', { type: 'near', missing: e.missing }));
+      if (!existingIds.includes(e.dish.id)) {
+        const card = createDishCard(e.dish, globalIndex, 'finder', { type: 'near', missing: e.missing });
+        card.dataset.id = e.dish.id;
+        card.classList.add('result-enter');
+        finderResults.appendChild(card);
+      }
+      globalIndex++;
     });
   }
 
