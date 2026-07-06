@@ -208,52 +208,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function initScrollHeight() {
-    const galleryScrollContainer = $('#gallery-scroll-container');
-    const galleryTrack = $('#gallery-track');
-    if (!galleryScrollContainer || !galleryTrack) return;
+  const galleryCarousel = $('#gallery-carousel');
+  if (galleryCarousel) {
+    galleryCarousel.addEventListener('scroll', updateGalleryScale, { passive: true });
+    window.addEventListener('resize', updateGalleryScale, { passive: true });
     
-    const trackWidth = galleryTrack.scrollWidth;
-    const vw = window.innerWidth;
-    
-    if (trackWidth <= vw) {
-      galleryScrollContainer.style.height = '100vh';
-    } else {
-      const extraScroll = trackWidth - vw + 80; // Add some padding for the end
-      galleryScrollContainer.style.height = `calc(100vh + ${extraScroll}px)`;
-    }
-    handleScroll();
+    // Hover-based scroll interceptor
+    galleryCarousel.addEventListener('wheel', (e) => {
+      // Allow scrolling if Shift key is held (native horizontal scroll)
+      if (e.shiftKey) return;
+      
+      const isAtStart = galleryCarousel.scrollLeft === 0;
+      const isAtEnd = galleryCarousel.scrollLeft >= (galleryCarousel.scrollWidth - galleryCarousel.clientWidth - 1);
+      
+      // If scrolling up at the start, or down at the end, let the page scroll vertically
+      if (isAtStart && e.deltaY < 0) return;
+      if (isAtEnd && e.deltaY > 0) return;
+      
+      // Otherwise, intercept vertical wheel to scroll horizontally
+      e.preventDefault();
+      galleryCarousel.scrollLeft += e.deltaY;
+    }, { passive: false });
   }
-
-  function handleScroll() {
-    const galleryScrollContainer = $('#gallery-scroll-container');
-    const galleryTrack = $('#gallery-track');
-    if (!galleryScrollContainer || !galleryTrack) return;
-    
-    const rect = galleryScrollContainer.getBoundingClientRect();
-    const trackWidth = galleryTrack.scrollWidth;
-    const vw = window.innerWidth;
-    const maxScroll = trackWidth - vw + 80;
-    
-    const scrollableHeight = galleryScrollContainer.offsetHeight - window.innerHeight;
-    if (scrollableHeight <= 0) return;
-    
-    let progress = 0;
-    if (rect.top <= 0) {
-      progress = Math.min(1, Math.abs(rect.top) / scrollableHeight);
-    }
-    
-    const tx = progress * maxScroll;
-    galleryTrack.style.transform = `translateX(${-tx}px)`;
-    
-    updateGalleryScale();
-  }
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  window.addEventListener('resize', initScrollHeight, { passive: true });
 
   renderGallery();
-  setTimeout(initScrollHeight, 50);
 
   // ---- MODAL ----
   const modal = $('#dish-modal');
