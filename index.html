@@ -165,6 +165,110 @@
 
 
   <!-- ============================================ -->
+  <!-- FOOD FINDER (STEP-BY-STEP)                    -->
+  <!-- ============================================ -->
+  <section class="finder" id="finder">
+    <div class="finder__header">
+      <h2 class="finder__title">What's in your kitchen?</h2>
+      <p class="finder__subtitle">Tell us what you have, and we'll tell you what dish you can make.</p>
+    </div>
+
+    <!-- Wizard Container -->
+    <div class="wizard" id="finder-wizard">
+      <div class="wizard__progress">
+        <span class="wizard__progress-text" id="wizard-progress-text">Step 1 of 3</span>
+        <div class="wizard__progress-bar">
+          <div class="wizard__progress-fill" id="wizard-progress-fill" style="width: 33.33%;"></div>
+        </div>
+      </div>
+
+      <div class="wizard__steps-container">
+        <!-- Step 1: Protein -->
+        <div class="wizard__step is-active" id="wizard-step-1">
+          <h3 class="wizard__step-title">Select a Protein</h3>
+          <p class="wizard__step-desc">Choose one main protein (or select None).</p>
+          <div class="wizard__options" id="options-protein">
+            <button class="wizard__opt wizard__opt--single" data-val="none">None</button>
+            <button class="wizard__opt wizard__opt--single" data-val="beef">Beef</button>
+            <button class="wizard__opt wizard__opt--single" data-val="chicken">Chicken</button>
+            <button class="wizard__opt wizard__opt--single" data-val="fish">Fish</button>
+            <button class="wizard__opt wizard__opt--single" data-val="pork">Pork</button>
+            <button class="wizard__opt wizard__opt--single" data-val="shellfish">Shellfish</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Vegetables -->
+        <div class="wizard__step" id="wizard-step-2">
+          <h3 class="wizard__step-title">Select Vegetables</h3>
+          <p class="wizard__step-desc">Select all the vegetables you have available.</p>
+          <div class="wizard__options" id="options-vegetables">
+            <button class="wizard__opt wizard__opt--multi" data-val="none">None</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="ampalaya">Ampalaya (bitter gourd)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="carrot">Carrot</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="kalabasa">Kalabasa (squash)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="kamatis">Kamatis (tomato)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="kangkong">Kangkong</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="malunggay">Malunggay</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="okra">Okra</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="patola">Patola (sponge gourd)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="pechay">Pechay</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="potatoes">Potatoes</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="sayote">Sayote (chayote)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="sitaw">Sitaw (string beans)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="talong">Talong (eggplant)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="upo">Upo (bottle gourd)</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Spices -->
+        <div class="wizard__step" id="wizard-step-3">
+          <h3 class="wizard__step-title">Select Spices & Aromatics</h3>
+          <p class="wizard__step-desc">Select any aromatics and spices you have.</p>
+          <div class="wizard__options" id="options-spices">
+            <button class="wizard__opt wizard__opt--multi" data-val="none">None</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="achuete">Achuete (annatto)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="bay leaf">Bay leaf</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="black pepper">Black pepper</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="garlic">Garlic</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="ginger">Ginger</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="onion">Onion</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="siling haba">Siling haba (long green chili)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="siling labuyo">Siling labuyo (bird's eye chili)</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="star anise">Star anise</button>
+            <button class="wizard__opt wizard__opt--multi" data-val="tanglad">Tanglad (lemongrass)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard__error" id="wizard-error" hidden>Please select at least one ingredient across the steps to continue.</div>
+
+      <div class="wizard__actions">
+        <button class="wizard__btn wizard__btn--secondary" id="wizard-btn-clear" style="margin-right: auto; border: none; text-decoration: underline;">Remove all filters</button>
+        <button class="wizard__btn wizard__btn--secondary" id="wizard-btn-back" disabled>Back</button>
+        <button class="wizard__btn wizard__btn--primary" id="wizard-btn-next">Next</button>
+        <button class="wizard__btn wizard__btn--primary" id="wizard-btn-submit" hidden>Find My Dishes</button>
+      </div>
+    </div>
+
+    <!-- Results View -->
+    <div class="finder__results-view" id="finder-results-view" hidden>
+      <div class="finder__results-header">
+        <h3 class="finder__results-title" id="finder-results-title">Your Matches</h3>
+        <button class="wizard__btn wizard__btn--secondary" id="finder-btn-edit">Edit Selections</button>
+      </div>
+      
+      <div class="finder__empty" id="finder-empty" hidden>
+        <h3 class="finder__empty-title">No dishes matched</h3>
+        <p class="finder__empty-sub">We couldn't find a Filipino dish matching your pantry. Try adding more ingredients.</p>
+      </div>
+
+      <div class="finder__results-grid" id="finder-results-grid">
+        <!-- Result Cards populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
   <!-- DISH DETAIL MODAL                             -->
   <!-- ============================================ -->
   <div class="modal" id="dish-modal" hidden aria-modal="true" role="dialog" aria-labelledby="modal-title">
@@ -188,6 +292,7 @@
         </div>
         <h2 class="modal__title" id="modal-title"></h2>
         <p class="modal__tagline" id="modal-tagline"></p>
+        <p class="modal__desc" id="modal-desc"></p>
         <div class="modal__details">
           <div class="modal__detail-col">
             <h3 class="modal__section-title">Ingredients</h3>
