@@ -213,79 +213,7 @@
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- SECTION DIVIDER                               -->
-  <!-- ============================================ -->
-  <div class="divider" aria-hidden="true">
-    <span class="divider__line"></span>
-    <span class="divider__dot"></span>
-    <span class="divider__line"></span>
-  </div>
 
-  <!-- ============================================ -->
-  <!-- FOOD FINDER                                   -->
-  <!-- ============================================ -->
-  <section class="finder" id="finder">
-    <div class="finder__header">
-      <h2 class="finder__title">Food Finder</h2>
-      <p class="finder__subtitle">Tell us what's in your kitchen. We'll tell you what you can make.</p>
-    </div>
-
-    <!-- Ingredient input -->
-    <div class="finder__input-area">
-      <div class="finder__input-wrap">
-        <input type="text" class="finder__search" id="finder-search" placeholder="Type an ingredient…" autocomplete="off" aria-label="Search for an ingredient to add" />
-        <button class="finder__browse-toggle" id="finder-browse-toggle">Browse by category ▾</button>
-      </div>
-
-      <!-- Browse Panel (hidden by default) -->
-      <div class="finder__browse-panel" id="finder-browse-panel" hidden>
-        <!-- Populated by JS -->
-      </div>
-
-      <!-- Quick Select Chips (always visible) -->
-      <div class="finder__quick-select">
-        <span class="finder__quick-label">Quick Add:</span>
-        <button class="finder__quick-chip" data-ing="eggs">Eggs</button>
-        <button class="finder__quick-chip" data-ing="chicken">Chicken</button>
-        <button class="finder__quick-chip" data-ing="tomatoes">Tomatoes</button>
-        <button class="finder__quick-chip" data-ing="pasta">Pasta</button>
-        <button class="finder__quick-chip" data-ing="rice">Rice</button>
-      </div>
-    </div>
-
-    <!-- Your Ingredients -->
-    <div class="finder__basket" id="finder-basket" hidden>
-      <div class="finder__basket-header">
-        <span class="finder__basket-label">Your Ingredients</span>
-        <button class="finder__clear-all" id="finder-clear-all" title="Clear all ingredients">Clear All</button>
-      </div>
-      <div class="finder__tags" id="finder-tags">
-        <!-- JS populated tags -->
-      </div>
-    </div>
-
-    <!-- Find Button / Counter -->
-    <div class="finder__action-row" id="finder-action-row" hidden>
-      <div class="finder__counter" id="finder-counter">
-        <span id="finder-count-text"></span>
-      </div>
-      <button class="finder__cta" id="finder-cta">Find My Dishes &rarr;</button>
-    </div>
-
-    <!-- Results grid -->
-    <div class="finder__results" id="finder-results" hidden>
-      <!-- Populated by JS -->
-    </div>
-
-    <!-- Empty/initial state -->
-    <div class="finder__empty" id="finder-empty">
-      <div class="finder__empty-header" style="text-align:center; margin-bottom: 2rem;">
-        <p class="finder__empty-title">Start typing to see what's possible</p>
-        <p class="finder__empty-sub">Add what you have on hand — we'll surface dishes you can make.</p>
-      </div>
-    </div>
-  </section>
 
   <!-- ============================================ -->
   <!-- DISH DETAIL MODAL                             -->
