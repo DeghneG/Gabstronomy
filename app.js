@@ -301,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(() => {
       updateGalleryScale();
     });
-    });
   }
 
   function updateGalleryScale() {
