@@ -125,7 +125,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 
 /* --- Trio Grid --- */
 .trio{padding:4rem var(--gutter)}
-.trio__header{max-width:var(--container);margin:0 auto 2rem}
+.trio__header{max-width:var(--container);margin:0 auto 2rem;text-align:center}
 .trio__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em}
 .trio__inner{max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
 .trio__item{position:relative;aspect-ratio:3/4;overflow:hidden;cursor:pointer;background:var(--surf-e)}
