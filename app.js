@@ -142,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
     card.innerHTML = `
       <div class="dish-card__image-wrap">
         <div class="dish-card__wipe"></div>
-        <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
+        <canvas class="dish-card__image" aria-hidden="true"></canvas>
+        <noscript><img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" /></noscript>
         <div class="dish-card__overlay">
           <div class="dish-card__content">
             ${topLabel}
@@ -155,6 +156,104 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => openModal(dish));
     card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish); });
     
+    // --- Canvas Ripple Logic ---
+    const canvas = card.querySelector('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = dish.image;
+    
+    let W, H;
+    let hovering = false;
+    let localX = 0, localY = 0;
+    let rippleStrength = 0;
+    let rAF_id = null;
+    let t = 0;
+
+    function resize(){
+      const rect = card.getBoundingClientRect();
+      if(rect.width === 0) return; // not in dom
+      W = canvas.width = rect.width;
+      H = canvas.height = rect.height;
+    }
+    
+    function draw(){
+      if (!img.complete || !W) { resize(); }
+      
+      t += 0.02;
+      rippleStrength += ((hovering ? 1 : 0) - rippleStrength) * 0.08;
+      
+      ctx.clearRect(0, 0, W, H);
+      
+      if (img.complete && W) {
+        const imgRatio = img.width / img.height;
+        const boxRatio = W / H;
+        let sx, sy, sw, sh;
+        if (imgRatio > boxRatio){
+          sh = img.height;
+          sw = sh * boxRatio;
+          sx = (img.width - sw) / 2;
+          sy = 0;
+        } else {
+          sw = img.width;
+          sh = sw / boxRatio;
+          sx = 0;
+          sy = (img.height - sh) / 2;
+        }
+        
+        const strips = 48;
+        const stripH = H / strips;
+        for (let i = 0; i < strips; i++){
+          const stripCenterNorm = ((i + 0.5) / strips) * 2 - 1;
+          const distToCursor = Math.abs(stripCenterNorm - localY);
+          const falloff = Math.max(0, 1 - distToCursor * 1.4);
+          const wave = Math.sin(t * 3 + i * 0.5) * 10 * falloff * rippleStrength;
+          const xOffset = wave + (localX * 6 * falloff * rippleStrength);
+          
+          const srcY = sy + (i / strips) * sh;
+          const srcH = sh / strips;
+          const destY = i * stripH;
+          
+          ctx.drawImage(img, sx, srcY, sw, srcH, xOffset, destY, W, stripH + 1);
+        }
+      }
+      
+      // Stop loop if animation has settled to prevent massive CPU usage
+      if (!hovering && rippleStrength < 0.01) {
+        rippleStrength = 0;
+        rAF_id = null;
+      } else {
+        rAF_id = requestAnimationFrame(draw);
+      }
+    }
+
+    img.onload = () => { 
+      resize(); 
+      draw(); 
+    };
+
+    window.addEventListener('resize', () => {
+      resize();
+      if (!rAF_id) { draw(); }
+    });
+
+    card.addEventListener('mouseenter', () => {
+      hovering = true;
+      if (document.getElementById('cursor')) document.getElementById('cursor').classList.add('active');
+      if (!rAF_id) { draw(); }
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      hovering = false;
+      if (document.getElementById('cursor')) document.getElementById('cursor').classList.remove('active');
+    });
+    
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      localX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      localY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    });
+
     revealObserver.observe(card);
     return card;
   }
@@ -533,22 +632,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   gridObserver.observe(document.body, { childList: true, subtree: true });
 
-  // ---- VIEW TOGGLE FOR GALLERY ----
-  const viewGridBtn = $('#view-grid');
-  const viewListBtn = $('#view-list');
-  const gallerySection = $('#gallery');
-  
-  if (viewGridBtn && viewListBtn && gallerySection) {
-    viewGridBtn.addEventListener('click', () => {
-      gallerySection.classList.remove('view-list');
-      viewGridBtn.classList.add('active');
-      viewListBtn.classList.remove('active');
+  // ---- CUSTOM CURSOR ----
+  const cursor = document.getElementById('cursor');
+  if (cursor) {
+    let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
+    window.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
     });
-    
-    viewListBtn.addEventListener('click', () => {
-      gallerySection.classList.add('view-list');
-      viewListBtn.classList.add('active');
-      viewGridBtn.classList.remove('active');
-    });
+    function animateCursor(){
+      curX += (mouseX - curX) * 0.18;
+      curY += (mouseY - curY) * 0.18;
+      cursor.style.left = curX + 'px';
+      cursor.style.top = curY + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
   }
 });
