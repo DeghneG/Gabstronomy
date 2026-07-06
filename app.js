@@ -208,13 +208,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const galleryCarousel = $('#gallery-carousel');
-  if (galleryCarousel) {
-    galleryCarousel.addEventListener('scroll', updateGalleryScale, { passive: true });
-    window.addEventListener('resize', updateGalleryScale, { passive: true });
+  function initScrollHeight() {
+    const galleryScrollContainer = $('#gallery-scroll-container');
+    const galleryTrack = $('#gallery-track');
+    if (!galleryScrollContainer || !galleryTrack) return;
+    
+    const trackWidth = galleryTrack.scrollWidth;
+    const vw = window.innerWidth;
+    
+    if (trackWidth <= vw) {
+      galleryScrollContainer.style.height = '100vh';
+    } else {
+      const extraScroll = trackWidth - vw + 80; // Add some padding for the end
+      galleryScrollContainer.style.height = `calc(100vh + ${extraScroll}px)`;
+    }
+    handleScroll();
   }
 
+  function handleScroll() {
+    const galleryScrollContainer = $('#gallery-scroll-container');
+    const galleryTrack = $('#gallery-track');
+    if (!galleryScrollContainer || !galleryTrack) return;
+    
+    const rect = galleryScrollContainer.getBoundingClientRect();
+    const trackWidth = galleryTrack.scrollWidth;
+    const vw = window.innerWidth;
+    const maxScroll = trackWidth - vw + 80;
+    
+    const scrollableHeight = galleryScrollContainer.offsetHeight - window.innerHeight;
+    if (scrollableHeight <= 0) return;
+    
+    let progress = 0;
+    if (rect.top <= 0) {
+      progress = Math.min(1, Math.abs(rect.top) / scrollableHeight);
+    }
+    
+    const tx = progress * maxScroll;
+    galleryTrack.style.transform = `translateX(${-tx}px)`;
+    
+    updateGalleryScale();
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('resize', initScrollHeight, { passive: true });
+
   renderGallery();
+  setTimeout(initScrollHeight, 50);
 
   // ---- MODAL ----
   const modal = $('#dish-modal');
