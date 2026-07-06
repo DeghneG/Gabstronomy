@@ -142,8 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.innerHTML = `
       <div class="dish-card__image-wrap">
         <div class="dish-card__wipe"></div>
-        <canvas class="dish-card__image" aria-hidden="true"></canvas>
-        <noscript><img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" /></noscript>
+        <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
         <div class="dish-card__overlay">
           <div class="dish-card__content">
             ${topLabel}
@@ -153,120 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `;
-    card.addEventListener('click', (e) => {
-      if (dragDist > 5) return; // Prevent click if dragging
+    card.addEventListener('click', () => {
       openModal(dish, card.querySelector('.dish-card__image-wrap'));
     });
     card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.dish-card__image-wrap')); });
-    
-    // --- Canvas Ripple Logic ---
-    const canvas = card.querySelector('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = dish.image;
-    
-    let W, H;
-    let hovering = false;
-    let localX = 0, localY = 0;
-    let rippleStrength = 0;
-    let rAF_id = null;
-    let t = 0;
-
-    function resize(){
-      const rect = card.getBoundingClientRect();
-      if(rect.width === 0) return; // not in dom
-      W = canvas.width = rect.width;
-      H = canvas.height = rect.height;
-    }
-    
-    function draw(){
-      if (!img.complete || !W) { resize(); }
-      
-      t += 0.02;
-      rippleStrength += ((hovering ? 1 : 0) - rippleStrength) * 0.08;
-      
-      ctx.clearRect(0, 0, W, H);
-      
-      if (img.complete && W) {
-        const imgRatio = img.width / img.height;
-        const boxRatio = W / H;
-        let sx, sy, sw, sh;
-        if (imgRatio > boxRatio){
-          sh = img.height;
-          sw = sh * boxRatio;
-          sx = (img.width - sw) / 2;
-          sy = 0;
-        } else {
-          sw = img.width;
-          sh = sw / boxRatio;
-          sx = 0;
-          sy = (img.height - sh) / 2;
-        }
-        
-        const strips = 48;
-        const stripH = H / strips;
-        for (let i = 0; i < strips; i++){
-          const stripCenterNorm = ((i + 0.5) / strips) * 2 - 1;
-          const distToCursor = Math.abs(stripCenterNorm - localY);
-          const falloff = Math.max(0, 1 - distToCursor * 1.4);
-          const wave = Math.sin(t * 3 + i * 0.5) * 10 * falloff * rippleStrength;
-          const xOffset = wave + (localX * 6 * falloff * rippleStrength);
-          
-          const srcY = sy + (i / strips) * sh;
-          const srcH = sh / strips;
-          const destY = i * stripH;
-          
-          ctx.drawImage(img, sx, srcY, sw, srcH, xOffset, destY, W, stripH + 1);
-        }
-      }
-      
-      // Stop loop if animation has settled to prevent massive CPU usage
-      if (!hovering && rippleStrength < 0.01) {
-        rippleStrength = 0;
-        rAF_id = null;
-      } else {
-        rAF_id = requestAnimationFrame(draw);
-      }
-    }
-
-    img.onload = () => { 
-      resize(); 
-      draw(); 
-    };
-
-    window.addEventListener('resize', () => {
-      resize();
-      if (!rAF_id) { draw(); }
-    });
-
-    card.addEventListener('mouseenter', () => {
-      hovering = true;
-      if (document.getElementById('cursor')) document.getElementById('cursor').classList.add('active');
-      if (!rAF_id) { draw(); }
-    });
-    
-    card.addEventListener('mouseleave', () => {
-      hovering = false;
-      if (document.getElementById('cursor')) document.getElementById('cursor').classList.remove('active');
-    });
-    
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      localX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      localY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-    });
 
     revealObserver.observe(card);
     return card;
   }
-
-  let carouselScroll = 0;
-  let carouselRAF = null;
-  let isHoveringCarousel = false;
-  let isDraggingCarousel = false;
-  let dragStartX = 0;
-  let dragDist = 0;
 
   function renderGallery() {
     const track = $('#gallery-track');
@@ -280,76 +173,45 @@ document.addEventListener('DOMContentLoaded', () => {
       $('#gallery-carousel').style.display = 'none';
       empty.hidden = false;
       counter.textContent = '0';
-      if (carouselRAF) cancelAnimationFrame(carouselRAF);
       return;
     }
     $('#gallery-carousel').style.display = '';
     empty.hidden = true;
     counter.textContent = filtered.length;
 
-    // Append 3 sets for infinite wrap
-    const renderSet = () => {
-      filtered.forEach((d, i) => track.appendChild(createDishCard(d, i, 'gallery')));
-    };
-    renderSet(); renderSet(); renderSet();
+    // Place featured first, rest normal
+    const featured = filtered.filter(d => d.featured);
+    const regular = filtered.filter(d => !d.featured);
+    if (featured.length > 0) {
+      track.appendChild(createDishCard(featured[0], 0, 'gallery'));
+    }
+    const rest = [...featured.slice(1), ...regular];
+    rest.forEach((d, i) => track.appendChild(createDishCard(d, featured.length > 0 ? i + 1 : i, 'gallery')));
     
-    startCarouselEngine(track, filtered.length);
+    updateGalleryScale();
   }
 
-  function startCarouselEngine(track, setLength) {
-    if (carouselRAF) cancelAnimationFrame(carouselRAF);
+  function updateGalleryScale() {
+    const track = $('#gallery-track');
+    if (!track) return;
     const cards = Array.from(track.children);
-    if (cards.length === 0) return;
-
-    track.addEventListener('mouseenter', () => isHoveringCarousel = true);
-    track.addEventListener('mouseleave', () => { isHoveringCarousel = false; isDraggingCarousel = false; });
-    track.addEventListener('mousedown', (e) => {
-      isDraggingCarousel = true;
-      dragStartX = e.clientX;
-      dragDist = 0;
+    const vw = window.innerWidth;
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const center = rect.left + rect.width / 2;
+      let progress = center / vw;
+      progress = Math.max(0, Math.min(1, progress));
+      
+      // Scale increases from left (0.7) to right (1.1)
+      const scale = 0.7 + (progress * 0.4);
+      card.style.setProperty('--scale', scale.toFixed(3));
     });
-    window.addEventListener('mouseup', () => { setTimeout(() => isDraggingCarousel = false, 50); });
-    window.addEventListener('mousemove', (e) => {
-      if (!isDraggingCarousel) return;
-      const dx = e.clientX - dragStartX;
-      carouselScroll -= dx;
-      dragDist += Math.abs(dx);
-      dragStartX = e.clientX;
-    });
+  }
 
-    function loop() {
-      if (!cards[0]) return;
-      const cardRect = cards[0].getBoundingClientRect();
-      const style = window.getComputedStyle(track);
-      const gap = parseFloat(style.gap) || 0;
-      
-      const itemWidth = cardRect.width + gap;
-      const setWidth = itemWidth * setLength;
-      
-      if (!isHoveringCarousel && !isDraggingCarousel) {
-        carouselScroll += 1.2;
-      }
-      
-      if (carouselScroll >= setWidth) carouselScroll -= setWidth;
-      else if (carouselScroll < 0) carouselScroll += setWidth;
-      
-      track.style.transform = `translateX(${-carouselScroll}px)`;
-      
-      const vw = window.innerWidth;
-      cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const center = rect.left + rect.width / 2;
-        let progress = center / vw;
-        progress = Math.max(0, Math.min(1, progress));
-        
-        // Scale increases from left (0.7) to right (1.1)
-        const scale = 0.7 + (progress * 0.4);
-        card.style.setProperty('--scale', scale.toFixed(3));
-      });
-      
-      carouselRAF = requestAnimationFrame(loop);
-    }
-    carouselRAF = requestAnimationFrame(loop);
+  const galleryCarousel = $('#gallery-carousel');
+  if (galleryCarousel) {
+    galleryCarousel.addEventListener('scroll', updateGalleryScale, { passive: true });
+    window.addEventListener('resize', updateGalleryScale, { passive: true });
   }
 
   renderGallery();
