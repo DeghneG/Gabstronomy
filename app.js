@@ -301,20 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateGalleryScale() {
-    const track = $('#gallery-track');
-    if (!track) return;
-    const cards = Array.from(track.children);
-    const vw = window.innerWidth;
-    cards.forEach(card => {
-      const rect = card.getBoundingClientRect();
-      const center = rect.left + rect.width / 2;
-      let progress = center / vw;
-      progress = Math.max(0, Math.min(1, progress));
-      
-      // Scale increases from left (0.7) to right (1.1)
-      const scale = 0.7 + (progress * 0.4);
-      card.style.setProperty('--scale', scale.toFixed(3));
-    });
+    // Intentionally empty to maintain uniform card sizes
   }
 
   const galleryCarousel = $('#gallery-carousel');
