@@ -294,8 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rest.forEach((d, i) => track.appendChild(createDishCard(d, featured.length > 0 ? i + 1 : i, 'gallery')));
     };
 
-    // Render twice for seamless looping
-    renderSet();
+    // Render once
     renderSet();
     
     // Wait for layout to be calculated before first scale update
@@ -399,40 +398,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
       }
     }, { capture: true });
-
-    // Perpetual Motion Loop
-    let exactScroll = 0;
-    let scrollSpeed = 1; // 1 pixel per frame for perfectly smooth 60fps
-    let isHovered = false;
-    let animationId;
-    
-    function startPerpetualMotion() {
-      if (animationId) cancelAnimationFrame(animationId);
-      
-      function step() {
-        if (!isHovered && !isDown && galleryCarousel.style.display !== 'none') {
-          exactScroll += scrollSpeed;
-          if (exactScroll >= 1) {
-            const increment = Math.floor(exactScroll);
-            galleryCarousel.scrollLeft += increment;
-            exactScroll -= increment;
-          }
-        }
-        
-        // Seamlessly loop back when reaching the end of the first set
-        if (galleryCarousel.scrollLeft >= galleryCarousel.scrollWidth / 2) {
-          galleryCarousel.scrollLeft -= (galleryCarousel.scrollWidth / 2);
-        }
-        
-        animationId = requestAnimationFrame(step);
-      }
-      animationId = requestAnimationFrame(step);
-    }
-    
-    galleryCarousel.addEventListener('pointerenter', () => isHovered = true);
-    galleryCarousel.addEventListener('pointerleave', () => isHovered = false);
-    
-    startPerpetualMotion();
   }
 
   renderGallery();
