@@ -313,20 +313,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseWidth = isDesktop ? 340 : 280;
     const baseHeight = isDesktop ? 480 : 400;
     
-    // Read phase: get all rects first to avoid layout thrashing
-    const rects = cards.map(card => card.getBoundingClientRect());
+    // Use CSS transforms for perfectly smooth gapless scaling without layout thrashing
+    let currentVisualX = 0;
     
-    // Write phase: set dimensions exactly so they touch edge-to-edge
     cards.forEach((card, i) => {
-      const rect = rects[i];
-      const center = rect.left + rect.width / 2;
+      // Calculate original, stable center based on index and scrollLeft
+      // Original left position of this card in the unscaled flex container:
+      const originalLeft = i * baseWidth;
+      const center = originalLeft - galleryCarousel.scrollLeft + (baseWidth / 2);
+      
       let progress = center / vw;
       progress = Math.max(0, Math.min(1, progress));
       
       // Left is small (0.6), Right is big (1.0)
       const scale = 0.6 + (progress * 0.4);
-      card.style.flex = `0 0 ${baseWidth * scale}px`;
-      card.style.height = `${baseHeight * scale}px`;
+      
+      // Calculate how much we need to translate this card to make it touch the previous one
+      const translateX = currentVisualX - originalLeft;
+      
+      // Apply transforms
+      card.style.transformOrigin = 'left center';
+      card.style.transform = `translateX(${translateX}px) scale(${scale})`;
+      
+      // Advance the visual X cursor by the scaled width of this card
+      currentVisualX += baseWidth * scale;
     });
   }
 
@@ -392,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Perpetual Motion Loop
     let exactScroll = 0;
-    let scrollSpeed = 0.5; // pixels per frame
+    let scrollSpeed = 1; // 1 pixel per frame for perfectly smooth 60fps
     let isHovered = false;
     let animationId;
     
