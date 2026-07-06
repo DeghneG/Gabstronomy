@@ -266,6 +266,45 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       galleryCarousel.scrollLeft += e.deltaY;
     }, { passive: false });
+    
+    // Drag to scroll
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let isDragging = false;
+
+    galleryCarousel.addEventListener('pointerdown', (e) => {
+      isDown = true;
+      isDragging = false;
+      galleryCarousel.style.cursor = 'grabbing';
+      startX = e.pageX - galleryCarousel.offsetLeft;
+      scrollLeft = galleryCarousel.scrollLeft;
+    });
+
+    galleryCarousel.addEventListener('pointerleave', () => {
+      isDown = false;
+      galleryCarousel.style.cursor = '';
+    });
+
+    galleryCarousel.addEventListener('pointerup', () => {
+      isDown = false;
+      galleryCarousel.style.cursor = '';
+    });
+
+    galleryCarousel.addEventListener('pointermove', (e) => {
+      if (!isDown) return;
+      const x = e.pageX - galleryCarousel.offsetLeft;
+      const walk = (x - startX) * 2; // scroll multiplier
+      if (Math.abs(walk) > 10) isDragging = true;
+      galleryCarousel.scrollLeft = scrollLeft - walk;
+    });
+    
+    galleryCarousel.addEventListener('click', (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, { capture: true });
   }
 
   renderGallery();
