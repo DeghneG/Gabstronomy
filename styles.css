@@ -175,15 +175,15 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery__counter{max-width:var(--container);margin:0 auto;padding:0 var(--gutter) 1.5rem;font-size:.8125rem;font-weight:500;color:var(--ink-t)}
 .gallery__indicator{text-align:right;max-width:var(--container);margin:0 auto;padding:0 var(--gutter);font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-s);margin-bottom:.5rem;animation:pulse 2s infinite ease-in-out}
 @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
-.gallery__carousel{width:100vw;max-width:100%;overflow-x:auto;padding:2rem 0 4rem;margin-left:calc(-50vw + 50%);position:relative;background:var(--surf);-ms-overflow-style:none;scrollbar-width:none}
+.gallery__carousel{width:100vw;max-width:100%;overflow-x:auto;padding:2rem 0 4rem;margin-left:calc(-50vw + 50%);position:relative;background:var(--surf);-ms-overflow-style:none;scrollbar-width:none;scroll-behavior:smooth}
 .gallery__carousel::-webkit-scrollbar{display:none}
-.gallery__track{display:flex;align-items:center;width:max-content;gap:2.5rem;padding:0 var(--gutter)}
+.gallery__track{display:flex;align-items:center;width:max-content;gap:0;padding:0}
 .gallery__empty{max-width:var(--container);margin:0 auto;padding:4rem var(--gutter);text-align:center}
 .gallery__empty-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:.5rem}
 .gallery__empty-sub{color:var(--ink-t);font-size:.9375rem}
 
 /* --- Dish Card --- */
-.dish-card{position:relative;border-radius:4px;overflow:hidden;background:var(--surf-e);cursor:pointer;flex:0 0 280px;height:400px;will-change:transform;transform:scale(var(--scale, 1));transform-origin:center right}
+.dish-card{position:relative;overflow:hidden;background:var(--surf-e);cursor:pointer;flex:0 0 280px;height:400px;border-radius:0}
 @media (min-width: 768px) { .dish-card{flex:0 0 340px;height:480px} }
 .dish-card__image-wrap{position:absolute;inset:0;width:100%;height:100%}
 .dish-card__wipe{position:absolute;inset:0;background:var(--surf-e);z-index:3;transform-origin:right;border-left:2px solid var(--ink);transition:transform 450ms cubic-bezier(.2,.9,.3,1) var(--delay, 0ms)}

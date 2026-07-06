@@ -323,20 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateGalleryScale() {
-    const track = $('#gallery-track');
-    if (!track) return;
-    const cards = Array.from(track.children);
-    const vw = window.innerWidth;
-    cards.forEach(card => {
-      const rect = card.getBoundingClientRect();
-      const center = rect.left + rect.width / 2;
-      let progress = center / vw;
-      progress = Math.max(0, Math.min(1, progress));
-      
-      // Scale increases from left (0.7) to right (1.1)
-      const scale = 0.7 + (progress * 0.4);
-      card.style.setProperty('--scale', scale.toFixed(3));
-    });
+    // Removed to keep cards side-by-side with no gaps
   }
 
   const galleryCarousel = $('#gallery-carousel');
@@ -344,21 +331,20 @@ document.addEventListener('DOMContentLoaded', () => {
     galleryCarousel.addEventListener('scroll', updateGalleryScale, { passive: true });
     window.addEventListener('resize', updateGalleryScale, { passive: true });
     
-    // Hover-based scroll interceptor
     galleryCarousel.addEventListener('wheel', (e) => {
-      // Allow scrolling if Shift key is held (native horizontal scroll)
       if (e.shiftKey) return;
       
       const isAtStart = galleryCarousel.scrollLeft === 0;
-      const isAtEnd = galleryCarousel.scrollLeft >= (galleryCarousel.scrollWidth - galleryCarousel.clientWidth - 1);
+      const isAtEnd = Math.abs(galleryCarousel.scrollWidth - galleryCarousel.clientWidth - galleryCarousel.scrollLeft) <= 1;
       
-      // If scrolling up at the start, or down at the end, let the page scroll vertically
       if (isAtStart && e.deltaY < 0) return;
       if (isAtEnd && e.deltaY > 0) return;
       
-      // Otherwise, intercept vertical wheel to scroll horizontally
       e.preventDefault();
-      galleryCarousel.scrollLeft += e.deltaY;
+      galleryCarousel.scrollBy({
+        left: e.deltaY * 2.5,
+        behavior: 'smooth'
+      });
     }, { passive: false });
     
     // Drag to scroll
