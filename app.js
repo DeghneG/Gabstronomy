@@ -182,26 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Gallery filters
-  buildFilterPills('filter-cuisine', TAXONOMY.cuisines, 'galleryFilters', 'cuisine');
-  buildFilterPills('filter-meal', TAXONOMY.mealTypes, 'galleryFilters', 'meal');
-  buildFilterPills('filter-method', TAXONOMY.cookingMethods, 'galleryFilters', 'method');
-
   // Finder secondary filters
   buildFilterPills('finder-filter-cuisine', TAXONOMY.cuisines, 'finderFilters', 'cuisine');
   buildFilterPills('finder-filter-meal', TAXONOMY.mealTypes, 'finderFilters', 'meal');
   buildFilterPills('finder-filter-method', TAXONOMY.cookingMethods, 'finderFilters', 'method');
-
-  // Gallery clear all
-  const filterSummaryClear = document.getElementById('filter-summary-clear');
-  if (filterSummaryClear) {
-    filterSummaryClear.addEventListener('click', () => {
-      state.galleryFilters = { cuisine: null, meal: null, method: null };
-      document.querySelectorAll('#gallery-filters .filter-pill').forEach(p => p.classList.remove('is-active'));
-      updateGalleryFilterUI();
-      renderGallery();
-    });
-  }
 
   // ---- GALLERY RENDERING ----
   function filterDishes(dishes, filters) {
@@ -295,24 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderGallery() {
     const track = $('#gallery-track');
     if (!track) return;
-    const empty = $('#gallery-empty');
-    const counter = $('#gallery-count');
-    const filtered = filterDishes(DISHES, state.galleryFilters);
 
     track.innerHTML = '';
-    if (filtered.length === 0) {
-      $('#gallery-carousel').style.display = 'none';
-      empty.hidden = false;
-      counter.textContent = '0';
-      return;
-    }
-    $('#gallery-carousel').style.display = '';
-    empty.hidden = true;
-    counter.textContent = filtered.length;
-
+    
     // Place featured first, rest normal
-    const featured = filtered.filter(d => d.featured);
-    const regular = filtered.filter(d => !d.featured);
+    const featured = DISHES.filter(d => d.featured);
+    const regular = DISHES.filter(d => !d.featured);
     
     const renderSet = () => {
       if (featured.length > 0) {
