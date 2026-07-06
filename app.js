@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
 
   function createDishCard(dish, index = 0, context = 'gallery', matchData = null) {
     let sizeClass = 'dish-card--reg';
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const card = document.createElement('div');
     card.className = `dish-card ${sizeClass}`;
-    card.style.transitionDelay = `${(index % 4) * 90}ms`;
+    card.style.setProperty('--delay', `${(index % 3) * 70}ms`);
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', `View ${dish.name}`);
@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     card.innerHTML = `
       <div class="dish-card__image-wrap">
+        <div class="dish-card__wipe"></div>
         <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
         <div class="dish-card__overlay">
           <div class="dish-card__content">
