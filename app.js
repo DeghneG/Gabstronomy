@@ -84,35 +84,102 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildFilterPills(containerId, items, filterGroup, filterKey) {
     const container = document.getElementById(containerId);
     if (!container) return;
-    const allPill = document.createElement('button');
-    allPill.className = 'filters__pill active';
-    allPill.textContent = 'All';
-    allPill.addEventListener('click', () => {
-      state[filterGroup][filterKey] = null;
-      container.querySelectorAll('.filters__pill').forEach(p => p.classList.remove('active'));
-      allPill.classList.add('active');
-      filterGroup === 'galleryFilters' ? renderGallery() : renderFinderResults();
-    });
-    container.appendChild(allPill);
-
+    
+    // We don't render "All" anymore as a pill. The default state is no active pill.
+    
     items.forEach(item => {
       const pill = document.createElement('button');
-      pill.className = 'filters__pill';
+      pill.className = 'filter-pill';
       pill.textContent = item;
       pill.addEventListener('click', () => {
-        const isActive = pill.classList.contains('active');
-        container.querySelectorAll('.filters__pill').forEach(p => p.classList.remove('active'));
+        const isActive = pill.classList.contains('is-active');
+        container.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('is-active'));
         if (isActive) {
-          allPill.classList.add('active');
           state[filterGroup][filterKey] = null;
         } else {
-          pill.classList.add('active');
+          pill.classList.add('is-active');
           state[filterGroup][filterKey] = item;
         }
-        filterGroup === 'galleryFilters' ? renderGallery() : renderFinderResults();
+        
+        if (filterGroup === 'galleryFilters') {
+          updateGalleryFilterUI();
+          renderGallery();
+        } else {
+          // finder logic
+          renderFinderResults();
+        }
       });
       container.appendChild(pill);
     });
+  }
+
+  // --- ACCORDION LOGIC ---
+  document.querySelectorAll('.filters__trigger').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const accordion = btn.closest('.filters__accordion');
+      const wasOpen = accordion.classList.contains('is-open');
+      
+      // Close all
+      document.querySelectorAll('.filters__accordion').forEach(a => a.classList.remove('is-open'));
+      
+      // Toggle
+      if (!wasOpen) accordion.classList.add('is-open');
+    });
+  });
+  
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.filters__accordion')) {
+      document.querySelectorAll('.filters__accordion').forEach(a => a.classList.remove('is-open'));
+    }
+  });
+
+  // --- GALLERY FILTER UI SYNC ---
+  function updateGalleryFilterUI() {
+    let activeCount = 0;
+    
+    // Update Triggers
+    const cats = ['cuisine', 'meal', 'method'];
+    cats.forEach(cat => {
+      const val = state.galleryFilters[cat];
+      const triggerValEl = document.getElementById(`trigger-val-${cat}`);
+      if (triggerValEl) {
+        triggerValEl.textContent = val ? `: ${val}` : '';
+      }
+      if (val) activeCount++;
+    });
+
+    // Update Summary
+    const summary = document.getElementById('filter-summary');
+    const summaryChips = document.getElementById('filter-summary-chips');
+    if (!summary || !summaryChips) return;
+
+    if (activeCount === 0) {
+      summary.hidden = true;
+    } else {
+      summary.hidden = false;
+      summaryChips.innerHTML = '';
+      
+      cats.forEach(cat => {
+        const val = state.galleryFilters[cat];
+        if (val) {
+          const chip = document.createElement('span');
+          chip.className = 'filter-summary-chip';
+          chip.innerHTML = `${val} <button aria-label="Remove ${val}">×</button>`;
+          chip.querySelector('button').addEventListener('click', () => {
+            state.galleryFilters[cat] = null;
+            // Also un-highlight the pill
+            const container = document.getElementById(`filter-${cat}`);
+            if(container) {
+              container.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('is-active'));
+            }
+            updateGalleryFilterUI();
+            renderGallery();
+          });
+          summaryChips.appendChild(chip);
+        }
+      });
+    }
   }
 
   // Gallery filters
@@ -126,12 +193,15 @@ document.addEventListener('DOMContentLoaded', () => {
   buildFilterPills('finder-filter-method', TAXONOMY.cookingMethods, 'finderFilters', 'method');
 
   // Gallery clear all
-  $('#filter-clear').addEventListener('click', () => {
-    state.galleryFilters = { cuisine: null, meal: null, method: null };
-    $$('#gallery-filters .filters__pill').forEach(p => p.classList.remove('active'));
-    $$('#gallery-filters .filters__pill').forEach(p => { if (p.textContent === 'All') p.classList.add('active'); });
-    renderGallery();
-  });
+  const filterSummaryClear = document.getElementById('filter-summary-clear');
+  if (filterSummaryClear) {
+    filterSummaryClear.addEventListener('click', () => {
+      state.galleryFilters = { cuisine: null, meal: null, method: null };
+      document.querySelectorAll('#gallery-filters .filter-pill').forEach(p => p.classList.remove('is-active'));
+      updateGalleryFilterUI();
+      renderGallery();
+    });
+  }
 
   // ---- GALLERY RENDERING ----
   function filterDishes(dishes, filters) {
@@ -165,30 +235,54 @@ document.addEventListener('DOMContentLoaded', () => {
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', `View ${dish.name}`);
     
-    const idxText = String(index + 1).padStart(2,'0');
-    let topLabel = `<span class="dish-card__idx">${idxText} / My choice</span>`;
+    let topLabel = '';
+    let contextHtml = '';
     
-    if (context === 'finder' && matchData) {
-      if (matchData.type === 'exact') {
-        topLabel = `<span class="dish-card__idx" style="color:var(--ink);background:var(--white);padding:2px 8px;border-radius:100px;display:inline-block">Full Match</span>`;
-      } else {
-        topLabel = `<span class="dish-card__idx" style="color:var(--ink-s);background:var(--white);padding:2px 8px;border-radius:100px;display:inline-block">Missing ${matchData.missing.length}</span> <span class="dish-card__idx" style="display:inline-block;margin-left:4px">(${matchData.missing.join(', ')})</span>`;
+    if (context === 'finder') {
+      sizeClass = 'result-card'; // override to use result-card style
+      card.className = sizeClass;
+      
+      let matchLabel = '';
+      if (matchData) {
+        if (matchData.type === 'exact') {
+          matchLabel = '<span class="result-card__match exact">Exact Match</span>';
+        } else {
+          matchLabel = `<span class="result-card__match near">Missing ${matchData.missing.length}</span>`;
+        }
       }
-    }
 
-    card.innerHTML = `
-      <div class="dish-card__image-wrap">
-        <div class="dish-card__wipe"></div>
-        <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
-        <div class="dish-card__overlay">
-          <div class="dish-card__content">
-            ${topLabel}
-            <div class="dish-card__name">${dish.name}</div>
-            <span class="dish-card__meta">${dish.cuisine} · ${dish.cookingMethod}</span>
+      card.innerHTML = `
+        <div class="result-card__image-wrap">
+          <img src="${dish.image}" alt="${dish.name}" class="result-card__image" loading="lazy" />
+          ${matchLabel}
+        </div>
+        <div class="result-card__body">
+          <div class="dish-card__meta">${dish.cookingMethod} <span class="dish-card__meta-dot">·</span> ${dish.mealType}</div>
+          <h3 class="dish-card__title">${dish.name}</h3>
+          <div class="dish-card__context">
+            <div class="dish-card__context-how">${dish.cookTime} · ${dish.tagline || 'Cooked to perfection'}</div>
+            ${matchData && matchData.type === 'near' ? `<div class="dish-card__context-missing">Missing: <strong>${matchData.missing.join(', ')}</strong></div>` : ''}
           </div>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      // Gallery Style
+      const idxText = String(index + 1).padStart(2,'0');
+      topLabel = `<span class="dish-card__idx">${idxText} / The Collection</span>`;
+      card.innerHTML = `
+        <div class="dish-card__image-wrap">
+          <div class="dish-card__wipe"></div>
+          <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
+          <div class="dish-card__overlay">
+            <div class="dish-card__content">
+              ${topLabel}
+              <div class="dish-card__name">${dish.name}</div>
+              <span class="dish-card__meta">${dish.cuisine} · ${dish.cookingMethod}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
     card.addEventListener('click', () => {
       openModal(dish, card.querySelector('.dish-card__image-wrap'));
     });
@@ -383,7 +477,53 @@ document.addEventListener('DOMContentLoaded', () => {
   const finderResults = $('#finder-results');
   const finderEmpty = $('#finder-empty');
   const finderCounter = $('#finder-counter');
-  const finderFiltersEl = $('#finder-filters');
+  
+  const finderBasket = $('#finder-basket');
+  const finderActionRow = $('#finder-action-row');
+  const finderCta = $('#finder-cta');
+  const finderBrowseToggle = $('#finder-browse-toggle');
+  const finderBrowsePanel = $('#finder-browse-panel');
+  
+  state.hasClickedFind = false;
+
+  // Browse by category
+  if (finderBrowseToggle) {
+    finderBrowseToggle.addEventListener('click', () => {
+      const isHidden = finderBrowsePanel.hidden;
+      finderBrowsePanel.hidden = !isHidden;
+      finderBrowseToggle.textContent = isHidden ? 'Browse by category ▴' : 'Browse by category ▾';
+    });
+
+    const cats = TAXONOMY.ingredientCategories;
+    const structure = [
+      { label: 'Vegetables', items: cats.vegetables },
+      { label: 'Meat', items: [...cats.meat.pork, ...cats.meat.chicken, ...cats.meat.beef, ...cats.meat.lamb] },
+      { label: 'Seafood', items: [...cats.seafood.fish, ...cats.seafood.shrimp, ...cats.seafood.crab, ...cats.seafood.shellfish] },
+      { label: 'Grains & Starches', items: cats.grainsStarches },
+      { label: 'Dairy & Eggs', items: cats.dairyEggs },
+      { label: 'Herbs & Spices', items: cats.herbsSpices },
+      { label: 'Pantry', items: cats.pantryCondiments }
+    ];
+    
+    finderBrowsePanel.innerHTML = '';
+    structure.forEach(group => {
+      const col = document.createElement('div');
+      col.className = 'finder__browse-col';
+      col.innerHTML = `<h4>${group.label}</h4><div class="finder__browse-chips"></div>`;
+      const chipsContainer = col.querySelector('.finder__browse-chips');
+      group.items.forEach(ing => {
+        const btn = document.createElement('button');
+        btn.className = 'finder__quick-chip';
+        btn.textContent = ing.charAt(0).toUpperCase() + ing.slice(1);
+        btn.dataset.ing = ing;
+        btn.addEventListener('click', () => {
+          addIngredient(ing);
+        });
+        chipsContainer.appendChild(btn);
+      });
+      finderBrowsePanel.appendChild(col);
+    });
+  }
 
   // Quick Select Chips
   document.querySelectorAll('.finder__quick-chip').forEach(btn => {
@@ -410,6 +550,38 @@ document.addEventListener('DOMContentLoaded', () => {
     let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
   }
 
+  // Update basket and find flow
+  function updateFinderFlowState() {
+    if (state.finderIngredients.length > 0) {
+      finderBasket.hidden = false;
+      finderActionRow.hidden = false;
+      finderEmpty.style.opacity = '0';
+      finderEmpty.style.height = '0';
+      finderEmpty.style.overflow = 'hidden';
+      finderEmpty.hidden = true;
+    } else {
+      finderBasket.hidden = true;
+      finderActionRow.hidden = true;
+      finderResults.hidden = true;
+      state.hasClickedFind = false;
+      
+      finderEmpty.hidden = false;
+      finderEmpty.style.opacity = '1';
+      finderEmpty.style.height = 'auto';
+    }
+  }
+
+  if (finderCta) {
+    finderCta.addEventListener('click', () => {
+      state.hasClickedFind = true;
+      finderResults.hidden = false;
+      debouncedRenderResults();
+      setTimeout(() => {
+        finderResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    });
+  }
+
   // Add ingredient tag
   function addIngredient(name) {
     const lower = name.toLowerCase().trim();
@@ -424,9 +596,15 @@ document.addEventListener('DOMContentLoaded', () => {
     tag.querySelector('button').addEventListener('click', e => { e.stopPropagation(); removeIngredient(lower); });
     finderTags.appendChild(tag);
     
-    if (state.finderIngredients.length > 0) finderClear.classList.add('is-active');
+    updateFinderFlowState();
     
-    debouncedRenderResults();
+    if (state.hasClickedFind) {
+      debouncedRenderResults();
+    } else {
+      // We just update the counter manually if results are hidden
+      updateResultsCounter();
+    }
+    
     finderSearch.value = '';
     hideAC();
     finderSearch.focus();
@@ -442,17 +620,24 @@ document.addEventListener('DOMContentLoaded', () => {
       tagEl.classList.add('tag-exit');
       tagEl.addEventListener('animationend', () => {
         tagEl.remove();
-        if (state.finderIngredients.length === 0) finderClear.classList.remove('is-active');
+        updateFinderFlowState();
       });
     } else {
-      if (state.finderIngredients.length === 0) finderClear.classList.remove('is-active');
+      updateFinderFlowState();
     }
     
-    debouncedRenderResults();
+    if (state.hasClickedFind) {
+      debouncedRenderResults();
+    } else {
+      updateResultsCounter();
+    }
+  }
+
+  function updateResultsCounter() {
+    renderFinderResults();
   }
 
   function renderFinderTags() {
-    // Only used on initial load or clear all
     finderTags.innerHTML = '';
     state.finderIngredients.forEach(ing => {
       const tag = document.createElement('span');
@@ -462,12 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tag.querySelector('button').addEventListener('click', e => { e.stopPropagation(); removeIngredient(ing); });
       finderTags.appendChild(tag);
     });
-    
-    if (state.finderIngredients.length === 0) {
-      finderClear.classList.remove('is-active');
-    } else {
-      finderClear.classList.add('is-active');
-    }
+    updateFinderFlowState();
   }
 
   finderClear.addEventListener('click', () => {
@@ -478,8 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tag.classList.add('tag-exit');
       tag.addEventListener('animationend', () => tag.remove());
     });
-    finderClear.classList.remove('is-active');
-    debouncedRenderResults();
+    setTimeout(updateFinderFlowState, 300);
   });
 
   // Autocomplete
@@ -588,74 +767,46 @@ document.addEventListener('DOMContentLoaded', () => {
     el.style.transition = 'opacity 0.2s';
     el.style.opacity = '0';
     setTimeout(() => {
-      el.innerHTML = newHTMLString;
+      el.innerHTML = `<strong>${newTotal}</strong> ${newHTMLString}`;
       el.style.opacity = '1';
     }, 200);
   }
 
   function renderFinderResults() {
-    if (state.finderIngredients.length === 0) {
-      finderSection.classList.remove('has-results');
-      // Exit animate all current results
-      const currentCards = Array.from(finderResults.children);
-      currentCards.forEach(card => {
-        card.classList.remove('result-enter');
-        card.classList.add('result-exit');
-        card.addEventListener('animationend', () => card.remove());
-      });
-      
-      finderEmpty.hidden = false;
-      const emptyTitle = finderEmpty.querySelector('.finder__empty-title');
-      const emptySub = finderEmpty.querySelector('.finder__empty-sub');
-      if (emptyTitle) emptyTitle.textContent = "Start typing to see what's possible";
-      if (emptySub) emptySub.innerHTML = "Add what you have on hand — we'll surface dishes you can make.<br/>Not sure where to start? Check out these examples:";
-      const samplesEl = $('#finder-samples');
-      if (samplesEl) samplesEl.hidden = false;
-      finderCounter.hidden = true;
-      finderFiltersEl.hidden = true;
-      currentCounterTotal = -1;
+    const activeIngs = state.finderIngredients;
+    if (activeIngs.length === 0) {
+      finderResults.innerHTML = '';
       return;
     }
 
-    finderSection.classList.add('has-results');
-    finderFiltersEl.hidden = false;
     const { exact, near } = matchDishes();
     const total = exact.length + near.length;
 
-    finderEmpty.hidden = total > 0;
-    finderCounter.hidden = false;
-
-    if (total === 0) {
-      // Exit animate all current results
-      Array.from(finderResults.children).forEach(card => {
-        card.classList.remove('result-enter');
-        card.classList.add('result-exit');
-        card.addEventListener('animationend', () => card.remove());
-      });
-      
-      finderEmpty.hidden = false;
-      const emptyTitle = finderEmpty.querySelector('.finder__empty-title');
-      const emptySub = finderEmpty.querySelector('.finder__empty-sub');
-      if (emptyTitle) emptyTitle.textContent = 'No exact or near matches';
-      if (emptySub) emptySub.textContent = 'Try adding more core ingredients like a protein, grain, or vegetable.';
-      const samplesEl = $('#finder-samples');
-      if (samplesEl) samplesEl.hidden = true;
-      animateFinderCounter(0, `<strong>0</strong> dishes match your ingredients`);
-      currentCounterTotal = 0;
-      return;
-    }
-
-    // Counter text
     let counterText = '';
     if (exact.length > 0 && near.length > 0) {
-      counterText = `<strong>${exact.length}</strong> exact match${exact.length !== 1 ? 'es' : ''} · <strong>${near.length}</strong> near match${near.length !== 1 ? 'es' : ''}`;
+      counterText = `exact match${exact.length !== 1 ? 'es' : ''} · <strong>${near.length}</strong> near match${near.length !== 1 ? 'es' : ''}`;
     } else if (exact.length > 0) {
-      counterText = `<strong>${exact.length}</strong> dish${exact.length !== 1 ? 'es' : ''} you can make right now`;
+      counterText = `dish${exact.length !== 1 ? 'es' : ''} you can make right now`;
+    } else if (near.length > 0) {
+      counterText = `dish${near.length !== 1 ? 'es' : ''} — missing 1–2 ingredients`;
     } else {
-      counterText = `<strong>${near.length}</strong> dish${near.length !== 1 ? 'es' : ''} — missing 1–2 ingredients`;
+      counterText = `dishes match your ingredients`;
     }
+    
     animateFinderCounter(total, counterText);
     currentCounterTotal = total;
+
+    // Only render grid if they clicked Find My Dishes
+    if (!state.hasClickedFind) return;
+
+    if (total === 0) {
+      finderResults.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--ink-s);">No dishes match your ingredients. Try adding more!</div>';
+      return;
+    }
+    
+    if (finderResults.children.length === 1 && !finderResults.firstElementChild.classList.contains('result-card')) {
+      finderResults.innerHTML = '';
+    }
 
     // Diff rendering for DOM cards
     const desiredDishes = [...exact, ...near].map(e => e.dish.id);

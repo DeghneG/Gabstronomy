@@ -147,22 +147,49 @@
       </div>
     </div>
 
-    <!-- Filter bar -->
+    <!-- Filter Accordion -->
     <div class="filters" id="gallery-filters">
-      <div class="filters__inner">
-        <div class="filters__group">
-          <span class="filters__label">Cuisine</span>
-          <div class="filters__options" id="filter-cuisine"></div>
+      <div class="filters__row">
+        
+        <div class="filters__accordion" id="accordion-cuisine">
+          <button class="filters__trigger" data-cat="cuisine">
+            <span class="filters__trigger-label">Cuisine</span>
+            <span class="filters__trigger-val" id="trigger-val-cuisine"></span>
+            <svg viewBox="0 0 10 10" class="filters__chevron"><path d="M2 3l3 3 3-3" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>
+          </button>
+          <div class="filters__panel" id="panel-cuisine">
+            <div class="filters__options" id="filter-cuisine"></div>
+          </div>
         </div>
-        <div class="filters__group">
-          <span class="filters__label">Meal</span>
-          <div class="filters__options" id="filter-meal"></div>
+
+        <div class="filters__accordion" id="accordion-meal">
+          <button class="filters__trigger" data-cat="meal">
+            <span class="filters__trigger-label">Meal</span>
+            <span class="filters__trigger-val" id="trigger-val-meal"></span>
+            <svg viewBox="0 0 10 10" class="filters__chevron"><path d="M2 3l3 3 3-3" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>
+          </button>
+          <div class="filters__panel" id="panel-meal">
+            <div class="filters__options" id="filter-meal"></div>
+          </div>
         </div>
-        <div class="filters__group">
-          <span class="filters__label">Method</span>
-          <div class="filters__options" id="filter-method"></div>
+
+        <div class="filters__accordion" id="accordion-method">
+          <button class="filters__trigger" data-cat="method">
+            <span class="filters__trigger-label">Method</span>
+            <span class="filters__trigger-val" id="trigger-val-method"></span>
+            <svg viewBox="0 0 10 10" class="filters__chevron"><path d="M2 3l3 3 3-3" stroke="currentColor" fill="none" stroke-width="1.5"/></svg>
+          </button>
+          <div class="filters__panel" id="panel-method">
+            <div class="filters__options" id="filter-method"></div>
+          </div>
         </div>
-        <button class="filters__clear" id="filter-clear" aria-label="Clear all filters">Clear All</button>
+        
+      </div>
+
+      <!-- Active Filters Summary -->
+      <div class="filters__summary" id="filter-summary" hidden>
+        <div class="filters__summary-chips" id="filter-summary-chips"></div>
+        <button class="filters__summary-clear" id="filter-summary-clear">Clear All</button>
       </div>
     </div>
 
@@ -207,20 +234,16 @@
     <!-- Ingredient input -->
     <div class="finder__input-area">
       <div class="finder__input-wrap">
-        <input
-          type="text"
-          class="finder__search"
-          id="finder-search"
-          placeholder="Type an ingredient…"
-          autocomplete="off"
-          aria-label="Search for an ingredient to add"
-        />
-        <button class="finder__clear-all" id="finder-clear-all" title="Clear all ingredients">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
+        <input type="text" class="finder__search" id="finder-search" placeholder="Type an ingredient…" autocomplete="off" aria-label="Search for an ingredient to add" />
+        <button class="finder__browse-toggle" id="finder-browse-toggle">Browse by category ▾</button>
       </div>
 
-      <!-- Quick Select Chips -->
+      <!-- Browse Panel (hidden by default) -->
+      <div class="finder__browse-panel" id="finder-browse-panel" hidden>
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Quick Select Chips (always visible) -->
       <div class="finder__quick-select">
         <span class="finder__quick-label">Quick Add:</span>
         <button class="finder__quick-chip" data-ing="eggs">Eggs</button>
@@ -229,20 +252,29 @@
         <button class="finder__quick-chip" data-ing="pasta">Pasta</button>
         <button class="finder__quick-chip" data-ing="rice">Rice</button>
       </div>
+    </div>
 
-      <!-- Active Tags Container -->
+    <!-- Your Ingredients -->
+    <div class="finder__basket" id="finder-basket" hidden>
+      <div class="finder__basket-header">
+        <span class="finder__basket-label">Your Ingredients</span>
+        <button class="finder__clear-all" id="finder-clear-all" title="Clear all ingredients">Clear All</button>
+      </div>
       <div class="finder__tags" id="finder-tags">
         <!-- JS populated tags -->
       </div>
     </div>
 
-    <!-- Results counter -->
-    <div class="finder__counter" id="finder-counter" hidden>
-      <span id="finder-count-text"></span>
+    <!-- Find Button / Counter -->
+    <div class="finder__action-row" id="finder-action-row" hidden>
+      <div class="finder__counter" id="finder-counter">
+        <span id="finder-count-text"></span>
+      </div>
+      <button class="finder__cta" id="finder-cta">Find My Dishes &rarr;</button>
     </div>
 
     <!-- Results grid -->
-    <div class="finder__results" id="finder-results">
+    <div class="finder__results" id="finder-results" hidden>
       <!-- Populated by JS -->
     </div>
 
@@ -250,10 +282,7 @@
     <div class="finder__empty" id="finder-empty">
       <div class="finder__empty-header" style="text-align:center; margin-bottom: 2rem;">
         <p class="finder__empty-title">Start typing to see what's possible</p>
-        <p class="finder__empty-sub">Add what you have on hand — we'll surface dishes you can make.<br/>Not sure where to start? Check out these examples:</p>
-      </div>
-      <div class="sample-recipes" id="finder-samples">
-        <!-- Populated by JS -->
+        <p class="finder__empty-sub">Add what you have on hand — we'll surface dishes you can make.</p>
       </div>
     </div>
   </section>
