@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     card.setAttribute('aria-label', `View ${dish.name}`);
     
     const idxText = String(index + 1).padStart(2,'0');
-    let topLabel = `<span class="dish-card__idx">${idxText} / Collection</span>`;
+    let topLabel = `<span class="dish-card__idx">${idxText} / My choice</span>`;
     
     if (context === 'finder' && matchData) {
       if (matchData.type === 'exact') {
