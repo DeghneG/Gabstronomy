@@ -327,31 +327,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // Determine which indices get the larger "feature" frame
     const featureSet = new Set(getFeatureIndices(ordered.length));
 
-    ordered.forEach((dish, i) => {
-      const isFeature = featureSet.has(i);
-      track.appendChild(createDishCard(dish, i, 'gallery', null, isFeature));
+    // Append 9 sets to create an endless illusion
+    const NUM_SETS = 9;
+    for (let s = 0; s < NUM_SETS; s++) {
+      const setWrapper = document.createElement('div');
+      setWrapper.className = 'gallery__set';
+      
+      ordered.forEach((dish, i) => {
+        const isFeature = featureSet.has(i);
+        setWrapper.appendChild(createDishCard(dish, i, 'gallery', null, isFeature));
+      });
+      
+      track.appendChild(setWrapper);
+    }
+    
+    // Position scroll at the middle set for infinite loop buffer
+    requestAnimationFrame(() => {
+      const carousel = $('#gallery-carousel');
+      if (carousel && track.firstElementChild) {
+        // Measure one set's width (including the 20px gap between sets)
+        const setWidth = track.firstElementChild.offsetWidth + 20;
+        carousel.scrollLeft = setWidth * 4;
+      }
     });
   }
 
-
-
   const galleryCarousel = $('#gallery-carousel');
   if (galleryCarousel) {
+    let isResetting = false;
+
+    galleryCarousel.addEventListener('scroll', () => {
+      if (isResetting) return;
+      const track = $('#gallery-track');
+      if (!track || !track.firstElementChild) return;
+      
+      const setWidth = track.firstElementChild.offsetWidth + 20;
+      
+      // If we scroll into the early sets, jump forward
+      if (galleryCarousel.scrollLeft < setWidth * 3) {
+        isResetting = true;
+        galleryCarousel.scrollLeft += setWidth;
+        isResetting = false;
+      }
+      // If we scroll into the late sets, jump backward
+      else if (galleryCarousel.scrollLeft > setWidth * 5) {
+        isResetting = true;
+        galleryCarousel.scrollLeft -= setWidth;
+        isResetting = false;
+      }
+    });
     
     galleryCarousel.addEventListener('wheel', (e) => {
       if (e.shiftKey) return;
-      
-      const isAtStart = galleryCarousel.scrollLeft === 0;
-      const isAtEnd = Math.abs(galleryCarousel.scrollWidth - galleryCarousel.clientWidth - galleryCarousel.scrollLeft) <= 1;
-      
-      if (isAtStart && e.deltaY < 0) return;
-      if (isAtEnd && e.deltaY > 0) return;
-      
       e.preventDefault();
-      galleryCarousel.scrollBy({
-        left: e.deltaY * 2.5,
-        behavior: 'smooth'
-      });
+      galleryCarousel.scrollLeft += e.deltaY * 2.5;
     }, { passive: false });
     
     // Drag to scroll
@@ -402,6 +431,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalClose = $('#modal-close');
 
   function openModal(dish, element) {
+    if (typeof dish === 'string') {
+      dish = DISHES.find(d => d.id === dish);
+      if (!dish) return;
+    }
+
     const doOpen = () => {
       $('#modal-image').src = dish.image;
       $('#modal-image').alt = dish.name;
@@ -419,12 +453,28 @@ document.addEventListener('DOMContentLoaded', () => {
         li.textContent = i.charAt(0).toUpperCase() + i.slice(1);
         ingList.appendChild(li);
       });
+      if (dish.specialIngredients && dish.specialIngredients.length > 0) {
+        dish.specialIngredients.forEach(s => {
+          const li = document.createElement('li');
+          let text = s.ingredient;
+          
+          if (s.ingredient.toLowerCase() === 'chicken liver' || s.ingredient.toLowerCase() === 'potatoes' || s.ingredient.toLowerCase() === 'kamote leaves') {
+            text += ' ★';
+            li.setAttribute('data-tooltip', "Deghne's fav addition to the dish");
+            li.classList.add('is-fav-ingredient');
+          }
+          
+          li.textContent = text;
+          li.classList.add('is-special');
+          ingList.appendChild(li);
+        });
+      }
       
       const stepList = $('#modal-steps');
       stepList.innerHTML = '';
       dish.steps.forEach(s => {
         const li = document.createElement('li');
-        li.textContent = s;
+        li.innerHTML = s;
         stepList.appendChild(li);
       });
 
@@ -696,5 +746,27 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animateCursor);
     }
     animateCursor();
+
+    // Hover state
+    const addHover = () => cursor.classList.add('is-hovering');
+    const rmHover = () => cursor.classList.remove('is-hovering');
+    
+    const hoverSelector = 'a, button, [role="button"], .dish-card, .result-card, .trio__item, .is-fav-ingredient';
+    document.querySelectorAll(hoverSelector).forEach(el => {
+      el.addEventListener('mouseenter', addHover);
+      el.addEventListener('mouseleave', rmHover);
+    });
+
+    // Re-bind hover states on DOM changes (for dynamically rendered cards)
+    const hoverObserver = new MutationObserver(() => {
+      document.querySelectorAll(hoverSelector).forEach(el => {
+        if (!el.dataset.cursorBound) {
+          el.dataset.cursorBound = '1';
+          el.addEventListener('mouseenter', addHover);
+          el.addEventListener('mouseleave', rmHover);
+        }
+      });
+    });
+    hoverObserver.observe(document.body, { childList: true, subtree: true });
   }
 });

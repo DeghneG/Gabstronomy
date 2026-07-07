@@ -7,7 +7,7 @@
   <title>Gabstronomy — Discover What You Can Create</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -90,16 +90,16 @@
   <!-- ============================================ -->
   <section class="trio" id="featured">
     <div class="trio__header">
-      <h2 class="trio__title">My choice</h2>
+      <h2 class="trio__title">My Top 3</h2>
     </div>
     <div class="trio__inner">
-      <div class="trio__item" onclick="openModal('cacio-e-pepe')">
+      <div class="trio__item" onclick="openModal('garlic-chicken-mushroom')">
         <div class="trio__image-wrap">
-          <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800&q=80" alt="Cacio e Pepe" class="trio__image" loading="lazy" />
+          <img src="images/garlic_chicken_mushroom.png" alt="Garlic Chicken Mushroom" class="trio__image" loading="lazy" />
         </div>
         <div class="trio__content">
-          <h3 class="trio__name">Cacio e Pepe</h3>
-          <p class="trio__desc">Three ingredients. Infinite restraint.</p>
+          <h3 class="trio__name">Garlic Chicken Mushroom</h3>
+          <p class="trio__desc">Crispy seared chicken with earthy mushrooms.</p>
         </div>
       </div>
       <div class="trio__item" onclick="openModal('shakshuka')">
@@ -316,6 +316,11 @@
       <span class="footer__copy">A curated food discovery experience</span>
     </div>
   </footer>
+
+  <!-- Custom Knife Cursor -->
+  <svg id="cursor" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M 19 21 L 14 16 L 2 2 C 4 1 12 5 16 13 L 21 18 L 19 21 Z" />
+  </svg>
 
   <script src="data.js"></script>
   <script src="app.js"></script>
