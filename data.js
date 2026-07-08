@@ -23,7 +23,7 @@ const TAXONOMY = {
     grainsStarches: [],
     dairyEggs: ["cheese", "egg"],
     herbsSpices: ["achuete", "bay leaf", "black pepper", "calamansi", "garlic", "ginger", "onion", "siling haba", "siling labuyo", "spring onions", "star anise", "tanglad"],
-    pantryCondiments: ["bread crumbs", "patis ng tagalog"]
+    pantryCondiments: ["bread crumbs", "gata", "patis ng tagalog"]
   }
 };
 
@@ -268,6 +268,55 @@ const DISHES = [
     ],
     image: "images/sinabawang_isda.png",
     featured: false,
+  },
+  {
+    id: "sweet-and-sour-bukaw",
+    name: "Sweet and Sour Bukaw",
+    tagline: "A delightful balance of sweet, sour, and savory.",
+    description: "Crispy fried fish smothered in a thick, vibrant sauce made from pineapple, ketchup, and colorful julienned vegetables.",
+    cuisine: "Filipino",
+    mealType: "Lunch / Dinner",
+    cookingMethod: "Sautéed / Stir-fried",
+    cookTime: "40 min",
+    servings: 4,
+    difficulty: "Medium",
+    coreIngredients: ["onion", "garlic", "bellpepper", "carrots", "ketchup", "pineapple", "siling haba"],
+    specialIngredients: [
+      { ingredient: "Pineapple", note: "Juice is used in the sauce for a tropical sweetness, and chunks add texture." },
+      { ingredient: "MSG", note: "Added to the aromatics for an umami boost." }
+    ],
+    steps: [
+      "Fry the fish and make sure to score the fish before frying.",
+      "Use the same pan but don't use all the oil, sauté onions, garlic, bellpepper, and carrots (julienne cut) until fragrant, then add MSG (for umami and better flavor).",
+      "Add 2-3 tablespoons of sugar, and the remaining juice from the pineapple, then add water just enough to cover the fish later.",
+      "When the sauce thickens, add the siling haba before adding the fish, mix to cover the fish fully, and turn off heat to rest for a few minutes for an even, smooth fragrance."
+    ],
+    image: "images/sweet_and_sour_bukaw.png",
+    featured: false
+  },
+  {
+    id: "bicol-express",
+    name: "Bicol Express",
+    tagline: "Spicy, creamy, and deeply savory.",
+    description: "A fiery and rich pork stew cooked in creamy coconut milk with copious amounts of chili, garlic, and onions.",
+    cuisine: "Filipino",
+    mealType: "Lunch / Dinner",
+    cookingMethod: "Braised / Slow-cooked",
+    cookTime: "45 min",
+    servings: 4,
+    difficulty: "Medium",
+    coreIngredients: ["pork", "onion", "garlic", "siling labuyo", "sitaw", "gata", "siling haba"],
+    specialIngredients: [],
+    steps: [
+      "On a hot oil fry the pork till golden brown then set aside.",
+      "In the same pan, sauté the onion, garlic, and the chili until fragrant.",
+      "Add the pork then sauté until mixed beautifully.",
+      "Add water enough to cover half the pork and then wait for the fond to surface.",
+      "Then add gata (coconut milk) and simmer until oil is visible.",
+      "Then add the siling haba for garnish."
+    ],
+    image: "images/bicol_express.png",
+    featured: false
   }
 ];
 
