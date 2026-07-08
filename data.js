@@ -7,7 +7,7 @@ const TAXONOMY = {
   mealTypes: ["Breakfast", "Lunch / Dinner", "Dessert", "Soups"],
   cookingMethods: ["Braised / Slow-cooked", "Sautéed / Stir-fried", "Boiled / Simmered", "Grilled", "Raw / No-cook", "Roasted"],
   ingredientCategories: {
-    vegetables: ["ampalaya", "carrot", "kalabasa", "kamatis", "kamote leaves", "kangkong", "malunggay", "mushroom", "okra", "patola", "pechay", "potatoes", "sayote", "sitaw", "talong", "upo"],
+    vegetables: ["ampalaya", "bellpepper", "carrot", "kalabasa", "kamatis", "kamote leaves", "kangkong", "malunggay", "mushroom", "okra", "patola", "pechay", "potatoes", "sayote", "sitaw", "talong", "upo"],
     meat: {
       pork: ["ham", "pork"],
       chicken: ["chicken"],
@@ -22,8 +22,8 @@ const TAXONOMY = {
     },
     grainsStarches: [],
     dairyEggs: ["cheese", "egg"],
-    herbsSpices: ["achuete", "bay leaf", "black pepper", "calamansi", "garlic", "ginger", "onion", "siling haba", "siling labuyo", "spring onions", "star anise", "tanglad"],
-    pantryCondiments: ["bread crumbs", "gata", "patis ng tagalog"]
+    herbsSpices: ["achuete", "bay leaf", "black pepper", "calamansi", "chili powder", "garlic", "ginger", "onion", "siling haba", "siling labuyo", "spring onions", "star anise", "tanglad"],
+    pantryCondiments: ["bagoong", "bread crumbs", "gata", "patis ng tagalog", "tomato paste"]
   }
 };
 
@@ -48,7 +48,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Braised / Slow-cooked",
-    cookTime: "45 min",
+    cookTime: "20-25 min",
     servings: 4,
     difficulty: "Easy",
     coreIngredients: ["chicken", "garlic", "bay leaf", "black pepper"],
@@ -79,7 +79,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Soups",
     cookingMethod: "Boiled / Simmered",
-    cookTime: "40 min",
+    cookTime: "30-35 min",
     servings: 4,
     difficulty: "Easy",
     coreIngredients: ["chicken", "ginger", "garlic", "onion", "sayote", "malunggay"],
@@ -122,30 +122,6 @@ const DISHES = [
     image: "https://images.unsplash.com/photo-1593504049359-74330189a345?w=800&q=80",
     featured: false,
   },
-  {
-    id: "nilagang-baka",
-    name: "Nilagang Baka",
-    tagline: "Clear beef broth for the soul.",
-    description: "A straightforward, comforting boiled beef soup with potatoes and leafy greens, seasoned simply with salt and whole black peppercorns.",
-    cuisine: "Filipino",
-    mealType: "Soups",
-    cookingMethod: "Boiled / Simmered",
-    cookTime: "1.5 hrs",
-    servings: 4,
-    difficulty: "Easy",
-    coreIngredients: ["beef", "onion", "black pepper", "potatoes", "pechay"],
-    specialIngredients: [
-      { ingredient: "Saging na saba (plantain)", note: "Adds a comforting, subtle sweetness to the savory broth." }
-    ],
-    steps: [
-      "Place beef chunks, quartered onions, and whole black peppercorns in a large pot with water.",
-      "Bring to a boil, skim off the scum, and simmer until the beef is very tender (about 1.5 hours).",
-      "Add the potatoes and cook until fork-tender.",
-      "Turn off the heat and stir in the pechay leaves."
-    ],
-    image: "https://images.unsplash.com/photo-1594991196323-0136faab74de?w=800&q=80",
-    featured: false,
-  },
 
   {
     id: "garlic-chicken-mushroom",
@@ -155,7 +131,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Sautéed / Stir-fried",
-    cookTime: "40 min",
+    cookTime: "30-35 min",
     servings: 4,
     difficulty: "Medium",
     coreIngredients: ["chicken", "garlic", "onion", "mushroom"],
@@ -182,7 +158,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Sautéed / Stir-fried",
-    cookTime: "45 min",
+    cookTime: "30-35 min",
     servings: 4,
     difficulty: "Medium",
     coreIngredients: ["chicken", "ham", "cheese", "bread crumbs", "egg"],
@@ -205,7 +181,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Soups",
     cookingMethod: "Boiled / Simmered",
-    cookTime: "30 min",
+    cookTime: "10-15 min",
     servings: 4,
     difficulty: "Easy",
     coreIngredients: ["fish", "kamatis", "onion", "ginger", "spring onions", "siling haba"],
@@ -230,7 +206,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Sautéed / Stir-fried",
-    cookTime: "40 min",
+    cookTime: "20-30 min",
     servings: 4,
     difficulty: "Medium",
     coreIngredients: ["onion", "garlic", "bellpepper", "carrots", "ketchup", "pineapple", "siling haba"],
@@ -255,7 +231,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Braised / Slow-cooked",
-    cookTime: "45 min",
+    cookTime: "15-25 min",
     servings: 4,
     difficulty: "Medium",
     coreIngredients: ["pork", "onion", "garlic", "siling labuyo", "sitaw", "gata", "siling haba"],
@@ -279,7 +255,7 @@ const DISHES = [
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Sautéed / Stir-fried",
-    cookTime: "30 min",
+    cookTime: "20-25 min",
     servings: 4,
     difficulty: "Medium",
     coreIngredients: ["bangus", "onion", "garlic", "calamansi"],
@@ -296,6 +272,52 @@ const DISHES = [
       "Add the remaining fresh onions and top it with the fried garlic."
     ],
     image: "images/bangus_steak.png",
+    featured: false
+  },
+  {
+    id: "sweet-and-spicy-pork-ribs",
+    name: "Sweet and Spicy Pork Ribs",
+    tagline: "Sticky, savory, and perfectly tender.",
+    description: "Tender pork ribs braised in a rich, sweet, and fiery tomato-based sauce, balanced with savory soy and oyster sauce.",
+    cuisine: "Filipino",
+    mealType: "Lunch / Dinner",
+    cookingMethod: "Braised / Slow-cooked",
+    cookTime: "40-50 min",
+    servings: 4,
+    difficulty: "Medium",
+    coreIngredients: ["pork", "onion", "garlic", "siling labuyo", "bellpepper", "tomato paste", "chili powder", "oyster sauce"],
+    specialIngredients: [],
+    steps: [
+      "On hot oil fry the ribs until golden brown, then set aside.",
+      "In the same pan, sauté onions, garlic, siling labuyo, bell pepper, and chili powder until fragrant.",
+      "Add the fried ribs back into the pan and sauté until mixed beautifully.",
+      "Pour in enough water to cover the pork. Stir in oyster sauce and sugar, and let it simmer until the pork softens.",
+      "Then add tomato paste and a little more sugar. Let it simmer until the sauce thickens into a rich glaze."
+    ],
+    image: "images/sweet_and_spicy_pork_ribs.png",
+    featured: false
+  },
+  {
+    id: "pork-binagoongan",
+    name: "Pork Binagoongan",
+    tagline: "Savory, funky, and deeply flavorful.",
+    description: "Tender pork braised in savory fermented shrimp paste (bagoong), balanced with sweet tomatoes and finished with smoky seared eggplant.",
+    cuisine: "Filipino",
+    mealType: "Lunch / Dinner",
+    cookingMethod: "Sautéed / Stir-fried",
+    cookTime: "30-35 min",
+    servings: 4,
+    difficulty: "Medium",
+    coreIngredients: ["pork", "onion", "garlic", "bagoong", "talong", "kamatis", "siling haba"],
+    specialIngredients: [],
+    steps: [
+      "Sear the talong (eggplant) until toast marks are visible, then set aside.",
+      "In the same pan, fry the pork until golden brown, then set aside.",
+      "Using the same pan, sauté the onion, garlic, and tomato until fragrant. Add the bagoong and mix well.",
+      "Add the pork back in, season with salt, black pepper, and sugar to taste. Add water and simmer until the pork softens.",
+      "Add the seared eggplant and siling haba. Mix gently, turn off the heat, and let it rest for 5 minutes before serving."
+    ],
+    image: "images/pork_binagoongan.png",
     featured: false
   }
 ];

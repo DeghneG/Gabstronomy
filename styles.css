@@ -122,6 +122,13 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .hero__cta svg{transition:transform .3s var(--ease)}
 .hero__cta:hover svg{transform:translateX(4px)}
 
+/* --- About Section --- */
+.about{padding:6rem var(--gutter) 2rem;}
+.about__inner{max-width:700px;margin:0 auto;text-align:center;}
+.about__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:1.5rem;}
+.about__text{font-size:1.0625rem;color:var(--ink-s);line-height:1.7;margin-bottom:1.5rem;}
+.about__text:last-child{margin-bottom:0;}
+
 /* --- Trio Grid --- */
 .trio{padding:4rem var(--gutter)}
 .trio__header{max-width:var(--container);margin:0 auto 2rem;text-align:center}
