@@ -15,7 +15,7 @@ const TAXONOMY = {
       lamb: []
     },
     seafood: {
-      fish: ["fish"],
+      fish: ["fish", "bangus"],
       shrimp: [],
       crab: [],
       shellfish: ["shellfish"]
@@ -70,30 +70,7 @@ const DISHES = [
     image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&q=80",
     featured: true,
   },
-  {
-    id: "pork-sinigang",
-    name: "Pork Sinigang",
-    tagline: "Sour, savory, comforting.",
-    description: "A sour tamarind-based soup with tender pork and a colorful assortment of vegetables. The ultimate comfort food on a rainy day.",
-    cuisine: "Filipino",
-    mealType: "Soups",
-    cookingMethod: "Boiled / Simmered",
-    cookTime: "1 hr",
-    servings: 4,
-    difficulty: "Medium",
-    coreIngredients: ["pork", "onion", "kamatis", "kangkong", "talong", "sitaw"],
-    specialIngredients: [
-      { ingredient: "Siling haba", note: "Add long green chilis for a subtle, aromatic heat in the broth." }
-    ],
-    steps: [
-      "Boil pork chunks with onions and tomatoes until the meat is fork-tender.",
-      "Add the souring agent (tamarind paste or fresh tamarind extract).",
-      "Add the vegetables in order of cooking time: eggplant and string beans first.",
-      "Turn off the heat and stir in the leafy kangkong so it wilts but stays bright green."
-    ],
-    image: "https://images.unsplash.com/photo-1621841315664-50f9db9117eb?w=800&q=80",
-    featured: true,
-  },
+
   {
     id: "chicken-tinola",
     name: "Chicken Tinola",
@@ -168,30 +145,6 @@ const DISHES = [
     ],
     image: "https://images.unsplash.com/photo-1594991196323-0136faab74de?w=800&q=80",
     featured: false,
-  },
-  {
-    id: "chicken-inasal",
-    name: "Chicken Inasal",
-    tagline: "Char-grilled, annatto-stained perfection.",
-    description: "Bacolod's famous grilled chicken, marinated in vinegar, lemongrass, and ginger, then basted with vibrant annatto oil as it chars over hot coals.",
-    cuisine: "Filipino",
-    mealType: "Lunch / Dinner",
-    cookingMethod: "Grilled",
-    cookTime: "30 min",
-    servings: 4,
-    difficulty: "Medium",
-    coreIngredients: ["chicken", "garlic", "ginger", "tanglad", "achuete"],
-    specialIngredients: [
-      { ingredient: "Calamansi juice", note: "Use in the marinade to tenderize the chicken and add bright acidity." }
-    ],
-    steps: [
-      "Blend garlic, ginger, chopped lemongrass, vinegar, and salt to make a marinade.",
-      "Marinate the chicken pieces for at least 3 hours or overnight.",
-      "Make basting oil by heating achuete (annatto) seeds in oil until the color bleeds, then discard seeds.",
-      "Grill the chicken over hot coals, basting generously with the achuete oil until cooked through and nicely charred."
-    ],
-    image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80",
-    featured: true,
   },
 
   {
@@ -311,11 +264,38 @@ const DISHES = [
       "On a hot oil fry the pork till golden brown then set aside.",
       "In the same pan, sauté the onion, garlic, and the chili until fragrant.",
       "Add the pork then sauté until mixed beautifully.",
-      "Add water enough to cover half the pork and then wait for the fond to surface.",
+      "Season with salt, MSG or Magic Sarap, and black pepper, then add water enough to cover half the pork and wait for the fond to surface.",
       "Then add gata (coconut milk) and simmer until oil is visible.",
       "Then add the siling haba for garnish."
     ],
     image: "images/bicol_express.png",
+    featured: false
+  },
+  {
+    id: "bangus-steak",
+    name: "Bangus Steak",
+    tagline: "Savory, tangy, and topped with toasted garlic.",
+    description: "A Filipino classic featuring fried milkfish steeped in a savory sauce of soy sauce, calamansi, and oyster sauce, finished with sweet onions and crispy garlic.",
+    cuisine: "Filipino",
+    mealType: "Lunch / Dinner",
+    cookingMethod: "Sautéed / Stir-fried",
+    cookTime: "30 min",
+    servings: 4,
+    difficulty: "Medium",
+    coreIngredients: ["bangus", "onion", "garlic", "calamansi"],
+    specialIngredients: [
+      { ingredient: "Cornstarch slurry", note: "Thickens the sauce to perfectly coat the fried fish." }
+    ],
+    steps: [
+      "Cut the bangus into supreme cuts, then season with salt and pepper.",
+      "Fry until golden brown, then set aside.",
+      "In a different cold pan, put the sliced garlic and oil. Slow cook until golden brown, then set the garlic aside. In the same pan, slightly caramelize the onions.",
+      "Add soy sauce and squeeze the calamansi.",
+      "Once mixed thoroughly, add water and a slurry (cornstarch and water mixture), then simmer for 3 to 5 minutes.",
+      "After a few minutes, add a little sugar. When the sugar dissolves, add the fried bangus and cover for 2 minutes.",
+      "Add the remaining fresh onions and top it with the fried garlic."
+    ],
+    image: "images/bangus_steak.png",
     featured: false
   }
 ];
