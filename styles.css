@@ -222,7 +222,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery__subtitle{color:var(--ink-s);font-size:1rem}
 .gallery-radial{position:relative;width:100%;min-height:1000px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:4rem 0}
 .gallery-center{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.knife-canvas-container{width:400px;height:400px;position:relative;z-index:2;mix-blend-mode:multiply;cursor:grab}
+.knife-canvas-container{width:400px;height:400px;position:relative;z-index:2;cursor:grab}
 .knife-canvas-container:active{cursor:grabbing}
 .knife-shadow{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);width:160px;height:20px;background:rgba(0,0,0,0.15);border-radius:50%;filter:blur(10px);z-index:1;transition:transform 0.1s linear, opacity 0.1s linear}
 .gallery-center__content{text-align:center;margin-top:-2rem;position:relative;z-index:3}
