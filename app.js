@@ -34,42 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // --- PRELOADER & HERO ENTRANCE ---
-  const preloader = document.getElementById('preloader');
-  const counterEl = document.getElementById('preloader-counter');
-  
-  const hasSeenPreloader = sessionStorage.getItem('gabstronomy_preloader');
-  
-  if (!hasSeenPreloader && preloader) {
-    // Run preloader sequence
-    document.body.style.overflow = 'hidden';
-    
-    // Simulate fast loading percentage
-    let count = 0;
-    const countInterval = setInterval(() => {
-      count += Math.floor(Math.random() * 10) + 5;
-      if (count > 100) count = 100;
-      counterEl.textContent = String(count).padStart(3, '0') + '%';
-      
-      if (count === 100) {
-        clearInterval(countInterval);
-        setTimeout(() => {
-          preloader.classList.add('is-hidden');
-          setTimeout(() => {
-            document.body.classList.add('start-hero');
-            document.body.style.overflow = '';
-            sessionStorage.setItem('gabstronomy_preloader', 'true');
-          }, 800); // Wait for curtain lift
-        }, 400); // Hold at 100% briefly
-      }
-    }, 50);
-  } else if (preloader) {
-    // Skip preloader
-    preloader.style.display = 'none';
-    document.body.classList.add('start-hero');
-  } else {
-    document.body.classList.add('start-hero');
-  }
+  // --- START HERO ---
+  document.body.classList.add('start-hero');
 
   // ---- STATE ----
   const state = {
