@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lenis@1.1.2/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -161,29 +162,21 @@
   <!-- FOOD GALLERY                                  -->
   <!-- ============================================ -->
   <section class="gallery" id="gallery">
-    <div class="gallery__header">
-      <div class="gallery__header-text">
-        <div class="gallery__header-top" style="display:flex; justify-content:space-between; align-items:flex-end;">
-          <div>
-            <h2 class="gallery__title reveal">The Collection</h2>
-            <p class="gallery__subtitle reveal reveal--delay-1">A curated selection of dishes worth making — and making again.</p>
-          </div>
+    <!-- Radial Layout Container -->
+    <div class="gallery-radial" id="gallery-radial">
+      
+      <!-- Central 3D Knife Feature -->
+      <div class="gallery-center">
+        <div id="knife-canvas-container" class="knife-canvas-container"></div>
+        <div class="knife-shadow" id="knife-shadow"></div>
+        
+        <div class="gallery-center__content">
+          <h2 class="gallery-center__title">Explore Museum</h2>
+          <button class="gallery-center__btn" onclick="document.getElementById('finder').scrollIntoView({behavior: 'smooth'})">Start now</button>
         </div>
       </div>
-    </div>
-
-    <!-- Carousel -->
-    <div class="gallery__indicator" aria-hidden="true">Scroll to explore &rarr;</div>
-    <div class="gallery__carousel" id="gallery-carousel">
-      <div class="gallery__track" id="gallery-track">
-        <!-- Populated by JS -->
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div class="gallery__empty" id="gallery-empty" hidden>
-      <p class="gallery__empty-title">No dishes match these filters</p>
-      <p class="gallery__empty-sub">Try removing a filter or exploring a different combination.</p>
+      
+      <!-- Radial tiles will be injected via JS -->
     </div>
   </section>
 

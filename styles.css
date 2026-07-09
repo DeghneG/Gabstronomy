@@ -184,11 +184,11 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 
 /* --- Marquee Strip --- */
 .marquee{overflow:hidden;padding:1.5rem 0;border-top:1px solid var(--border-l);border-bottom:1px solid var(--border-l);white-space:nowrap;position:relative}
-.marquee__track{display:flex;width:max-content;animation:marqueeScroll 30s linear infinite}
+.marquee__track{display:flex;width:max-content;animation:marqueeScroll 30s linear infinite;gap:1.5rem}
 .marquee__track:hover{animation-play-state:paused}
-.marquee__item{display:inline-flex;align-items:center;gap:1.5rem;padding:0 1.5rem;font-family:var(--serif);font-size:clamp(0.875rem,1.5vw,1.125rem);color:var(--ink-t);letter-spacing:0.02em}
+.marquee__item{display:inline-flex;align-items:center;gap:1.5rem;font-family:var(--serif);font-size:clamp(0.875rem,1.5vw,1.125rem);color:var(--ink-t);letter-spacing:0.02em}
 .marquee__dot{width:4px;height:4px;border-radius:50%;background:var(--ink-t);flex-shrink:0;opacity:0.5}
-@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(calc(-50% - 0.75rem))}}
 
 /* --- Filters --- */
 .filters{max-width:var(--container);margin:0 auto;padding:1.5rem var(--gutter)}
@@ -220,147 +220,41 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery__header{max-width:var(--container);margin:0 auto;padding:4rem var(--gutter) 2rem}
 .gallery__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:.5rem}
 .gallery__subtitle{color:var(--ink-s);font-size:1rem}
-.gallery__counter{max-width:var(--container);margin:0 auto;padding:0 var(--gutter) 1.5rem;font-size:.8125rem;font-weight:500;color:var(--ink-t)}
-.gallery__indicator{text-align:right;max-width:var(--container);margin:0 auto;padding:0 var(--gutter);font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-s);margin-bottom:.5rem;animation:pulse 2s infinite ease-in-out}
-@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
-.gallery__carousel{width:100vw;max-width:100%;overflow:hidden;padding:4rem 0 4rem;margin-left:calc(-50vw + 50%);position:relative;background:var(--surf);user-select:none;-webkit-user-select:none;}
-.gallery__carousel::-webkit-scrollbar{display:none}
-.gallery__track{display:flex;align-items:center;width:max-content;gap:20px;padding:3rem 2rem}
-.gallery__set{display:flex;align-items:center;gap:20px}
-.gallery__empty{max-width:var(--container);margin:0 auto;padding:4rem var(--gutter);text-align:center}
-.gallery__empty-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:.5rem}
-.gallery__empty-sub{color:var(--ink-t);font-size:.9375rem}
+.gallery-radial{position:relative;width:100%;min-height:800px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:4rem 0}
+.gallery-center{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.knife-canvas-container{width:400px;height:400px;position:relative;z-index:2;mix-blend-mode:multiply;cursor:grab}
+.knife-canvas-container:active{cursor:grabbing}
+.knife-shadow{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);width:160px;height:20px;background:rgba(0,0,0,0.15);border-radius:50%;filter:blur(10px);z-index:1;transition:transform 0.1s linear, opacity 0.1s linear}
+.gallery-center__content{text-align:center;margin-top:-2rem;position:relative;z-index:3}
+.gallery-center__title{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4rem);letter-spacing:-0.03em;margin-bottom:1rem;color:var(--ink)}
+.gallery-center__btn{padding:0.75rem 2rem;background:linear-gradient(135deg, #e3a9f0, #f08960);color:var(--white);border-radius:100px;font-weight:600;font-size:0.9375rem;border:none;cursor:pointer;transition:transform 0.3s cubic-bezier(.16,1,.3,1), box-shadow 0.3s ease}
+.gallery-center__btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(240,137,96,0.3)}
 
-/* --- Dish Card (Gallery Wall Treatment) --- */
-.dish-card{
-  position:relative;
-  cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  transition:transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s cubic-bezier(.16,1,.3,1);
-  /* Stagger offset via CSS custom property set by JS */
-  transform:translateY(var(--stagger-y, 0px));
-  will-change:transform;
-}
-.dish-card:hover{
-  z-index:5;
-  box-shadow:0 16px 40px rgba(0,0,0,0.25);
-}
+.radial-tile{position:absolute;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.1);opacity:0;transform:translateY(40px) rotate(var(--r, 0deg));animation:tileRise 0.8s cubic-bezier(.16,1,.3,1) var(--delay, 0s) forwards;background:var(--white);padding:8px;border:1px solid var(--border-l)}
+.radial-tile:hover{z-index:20 !important;box-shadow:0 15px 40px rgba(0,0,0,0.2)}
+.radial-tile__image-wrap{overflow:hidden;position:relative}
+.radial-tile__image{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s cubic-bezier(.16,1,.3,1)}
+.radial-tile:hover .radial-tile__image{transform:scale(1.05)}
 
-/* --- Size Variants --- */
-@media (min-width: 768px) {
-  .dish-card--reg{width:300px}
-  .dish-card--feature{width:420px}
-}
-@media (max-width: 767px) {
-  .dish-card--reg{width:240px}
-  .dish-card--feature{width:300px}
-}
+@keyframes tileRise{to{opacity:1;transform:rotate(var(--r, 0deg)) translateY(0) translateX(var(--tx, 0)) translateY(var(--ty, 0)) scale(var(--s, 1))}}
 
-/* --- Framed / Matted Border --- */
-.dish-card__frame{
-  position:relative;
-  overflow:hidden;
-  background:#E8E2D8;
-  padding:12px;
-  border:1px solid var(--border);
-}
-.dish-card--feature .dish-card__frame{padding:14px}
+/* Size variants based on reference */
+.radial-tile--large{width:260px;height:340px}
+.radial-tile--medium{width:200px;height:260px}
+.radial-tile--small{width:160px;height:200px}
 
-/* --- Image Container --- */
-.dish-card__image-wrap{
-  position:relative;
-  overflow:hidden;
-  width:100%;
-}
-.dish-card--reg .dish-card__image-wrap{aspect-ratio:3/4}
-.dish-card--feature .dish-card__image-wrap{aspect-ratio:4/3}
-
-/* --- Duotone Color Grade --- */
-.dish-card__image{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-  filter:grayscale(0.85) sepia(0.2) contrast(1.05) brightness(0.95);
-  transition:filter 1.2s cubic-bezier(.16,1,.3,1), transform 1.2s cubic-bezier(.16,1,.3,1);
-}
-.dish-card:hover .dish-card__image,
-.dish-card:focus-within .dish-card__image{
-  filter:grayscale(0.4) sepia(0.1) contrast(1.02) brightness(1.0);
-  transform:scale(1.03);
-}
-
-/* --- Reveal wipe (kept) --- */
-.dish-card__wipe{
-  position:absolute;
-  inset:0;
-  background:#E8E2D8;
-  z-index:3;
-  transform-origin:right;
-  border-left:2px solid var(--border);
-  transition:transform 500ms cubic-bezier(.2,.9,.3,1) var(--delay, 0ms);
-}
-.dish-card.is-visible .dish-card__wipe{transform:scaleX(0)}
-
-/* --- Always-Visible Caption / Placard --- */
-.dish-card__placard{
-  padding:.875rem .25rem .5rem;
-  display:flex;
-  flex-direction:column;
-  gap:.2rem;
-}
-.dish-card__placard-idx{
-  font-size:.625rem;
-  font-weight:600;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--ink-t);
-  font-variant-numeric:tabular-nums;
-}
-.dish-card__placard-name{
-  font-family:var(--serif);
-  font-size:1.1rem;
-  color:var(--ink);
-  line-height:1.25;
-}
-.dish-card--feature .dish-card__placard-name{font-size:1.3rem}
-.dish-card__placard-tag{
-  font-size:.6875rem;
-  font-weight:500;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  color:var(--ink-t);
-}
-
-/* --- Hover overlay (subtle warm glow, not required for info) --- */
-.dish-card__overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(to top, rgba(20,18,16,.5) 0%, transparent 50%);
-  opacity:0;
-  transition:opacity .5s ease;
-  z-index:2;
-  pointer-events:none;
-}
-.dish-card:hover .dish-card__overlay,
-.dish-card:focus-within .dish-card__overlay{opacity:1}
-
-/* --- Responsive: remove stagger on narrow viewports --- */
-@media (max-width: 767px) {
-  .dish-card{transform:translateY(0) !important}
-  .gallery__track{padding:1.5rem 1rem;gap:14px}
-}
-
-@media (max-width: 860px) {
-  .gallery__grid, .finder__results { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+@media (max-width: 1024px) {
+  .gallery-radial{min-height:auto;flex-direction:column;gap:3rem}
+  .radial-tile{position:static;transform:none !important;animation:none;opacity:1;margin:0 auto}
+  .gallery-center{margin-bottom:2rem}
+  .knife-canvas-container{width:300px;height:300px}
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dish-card__image, .dish-card__overlay { transition: none !important; }
-  .dish-card__wipe { display: none !important; }
-  .dish-card { transition: none !important; }
+  .radial-tile{animation:none;opacity:1;transform:rotate(var(--r, 0deg)) translateY(0) translateX(var(--tx, 0)) translateY(var(--ty, 0)) scale(var(--s, 1))}
 }
+
+
 
 
 /* --- Food Finder (Wizard) --- */
