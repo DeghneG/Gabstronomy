@@ -82,10 +82,9 @@ const DISHES = [
     cookTime: "30-35 min",
     servings: 4,
     difficulty: "Easy",
-    coreIngredients: ["chicken", "ginger", "garlic", "onion", "sayote", "malunggay"],
+    coreIngredients: ["chicken", "ginger", "garlic", "onion", "sayote", "malunggay", "siling haba"],
     specialIngredients: [
-      { ingredient: "Tanglad (lemongrass)", note: "Bruise and simmer with the broth for a bright, citrusy aroma." },
-      { ingredient: "Siling haba", note: "Add for a subtle, aromatic heat in the broth." }
+      { ingredient: "Tanglad (lemongrass)", note: "Bruise and simmer with the broth for a bright, citrusy aroma." }
     ],
     steps: [
       "Sauté the tanglad (lemongrass), garlic, and onion until they release their aromatic fragrance.",
@@ -98,30 +97,7 @@ const DISHES = [
     image: "https://images.unsplash.com/photo-1548943487-a2e4b43b5936?w=800&q=80",
     featured: false,
   },
-  {
-    id: "pinakbet",
-    name: "Pinakbet",
-    tagline: "The bounty of the vegetable garden.",
-    description: "A robust vegetable stew from the Ilocos region, featuring bitter gourd, eggplant, and squash, all tied together with the deep umami of shrimp paste.",
-    cuisine: "Filipino",
-    mealType: "Lunch / Dinner",
-    cookingMethod: "Sautéed / Stir-fried",
-    cookTime: "30 min",
-    servings: 4,
-    difficulty: "Medium",
-    coreIngredients: ["pork", "garlic", "onion", "kamatis", "ampalaya", "kalabasa", "sitaw", "talong", "okra"],
-    specialIngredients: [
-      { ingredient: "Bagoong alamang (shrimp paste)", note: "Sauté with the aromatics for an authentic, deep umami flavor." }
-    ],
-    steps: [
-      "Sauté small pieces of pork (usually belly) until fat renders. Add garlic, onion, and tomatoes.",
-      "Add squash (kalabasa) and a little water; cover and cook until slightly tender.",
-      "Add the remaining vegetables (ampalaya, sitaw, talong, okra).",
-      "Cook until vegetables are tender but not mushy. Serve hot."
-    ],
-    image: "https://images.unsplash.com/photo-1593504049359-74330189a345?w=800&q=80",
-    featured: false,
-  },
+
 
   {
     id: "garlic-chicken-mushroom",
@@ -278,20 +254,20 @@ const DISHES = [
     id: "sweet-and-spicy-pork-ribs",
     name: "Sweet and Spicy Pork Ribs",
     tagline: "Sticky, savory, and perfectly tender.",
-    description: "Tender pork ribs braised in a rich, sweet, and fiery tomato-based sauce, balanced with savory soy and oyster sauce.",
+    description: "Tender pork ribs braised in a rich, sweet, and fiery tomato-based sauce, balanced with savory soy.",
     cuisine: "Filipino",
     mealType: "Lunch / Dinner",
     cookingMethod: "Braised / Slow-cooked",
     cookTime: "40-50 min",
     servings: 4,
     difficulty: "Medium",
-    coreIngredients: ["pork", "onion", "garlic", "siling labuyo", "bellpepper", "tomato paste", "chili powder", "oyster sauce"],
+    coreIngredients: ["pork", "onion", "garlic", "siling labuyo", "bellpepper", "tomato paste", "chili powder"],
     specialIngredients: [],
     steps: [
       "On hot oil fry the ribs until golden brown, then set aside.",
       "In the same pan, sauté onions, garlic, siling labuyo, bell pepper, and chili powder until fragrant.",
       "Add the fried ribs back into the pan and sauté until mixed beautifully.",
-      "Pour in enough water to cover the pork. Stir in oyster sauce and sugar, and let it simmer until the pork softens.",
+      "Pour in enough water to cover the pork. Stir in sugar, and let it simmer until the pork softens.",
       "Then add tomato paste and a little more sugar. Let it simmer until the sauce thickens into a rich glaze."
     ],
     image: "images/sweet_and_spicy_pork_ribs.png",

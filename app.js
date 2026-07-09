@@ -498,26 +498,32 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const ingList = $('#modal-ingredients');
       ingList.innerHTML = '';
-      dish.coreIngredients.forEach(i => {
+      
+      const renderIngredient = (name, isSpecialItem) => {
         const li = document.createElement('li');
-        li.textContent = i.charAt(0).toUpperCase() + i.slice(1);
-        ingList.appendChild(li);
-      });
-      if (dish.specialIngredients && dish.specialIngredients.length > 0) {
-        dish.specialIngredients.forEach(s => {
-          const li = document.createElement('li');
-          let text = s.ingredient;
-          
-          if (s.ingredient.toLowerCase() === 'chicken liver' || s.ingredient.toLowerCase() === 'potatoes' || s.ingredient.toLowerCase() === 'kamote leaves') {
-            text += ' ★';
-            li.setAttribute('data-tooltip', "Deghne's fav addition to the dish");
-            li.classList.add('is-fav-ingredient');
-          }
-          
-          li.textContent = text;
+        let text = name;
+        const lowerName = name.toLowerCase();
+        
+        const isFav = ['chicken liver', 'potatoes', 'kamote leaves', 'chili powder', 'calamansi'].includes(lowerName);
+        const isHighlight = ['bagoong'].includes(lowerName) || isSpecialItem;
+
+        if (isFav) {
+          text += ' ★';
+          li.setAttribute('data-tooltip', "Deghne's fav addition to the dish");
+          li.classList.add('is-fav-ingredient');
+        }
+        
+        if (isHighlight || isFav) {
           li.classList.add('is-special');
-          ingList.appendChild(li);
-        });
+        }
+        
+        li.textContent = text.charAt(0).toUpperCase() + text.slice(1);
+        ingList.appendChild(li);
+      };
+
+      dish.coreIngredients.forEach(i => renderIngredient(i, false));
+      if (dish.specialIngredients) {
+        dish.specialIngredients.forEach(s => renderIngredient(s.ingredient, true));
       }
       
       const stepList = $('#modal-steps');
