@@ -22,6 +22,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   requestAnimationFrame(raf);
 
+  // Intercept anchor links for Lenis
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        lenis.scrollTo(targetElement, { offset: 0 });
+      }
+    });
+  });
+
   // --- PRELOADER & HERO ENTRANCE ---
   const preloader = document.getElementById('preloader');
   const counterEl = document.getElementById('preloader-counter');
