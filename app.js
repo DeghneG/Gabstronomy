@@ -224,271 +224,256 @@ document.addEventListener('DOMContentLoaded', () => {
   // Add Trio items to reveal observer
   $$('.trio__item').forEach(item => revealObserver.observe(item));
 
-  function createDishCard(dish, index = 0, context = 'finder', matchData = null) {
-    const card = document.createElement('div');
-    const sizeClass = 'result-card';
-    card.className = sizeClass;
-    
-    let matchLabel = '';
-    if (matchData) {
-      if (matchData.type === 'exact') {
-        matchLabel = '<span class="result-card__match exact">Exact Match</span>';
-      } else {
-        matchLabel = `<span class="result-card__match near">Near Match — ${matchData.missing.length} missing</span>`;
-      }
+  // Feature frame indices — distributed evenly, not clustered
+  function getFeatureIndices(total) {
+    if (total <= 3) return [0];
+    const features = [];
+    // Place a feature roughly every 5–6 frames, starting at index 0
+    const spacing = Math.max(4, Math.floor(total / Math.ceil(total / 5)));
+    for (let i = 0; i < total; i += spacing) {
+      features.push(i);
     }
-    
-    let specialHtml = '';
-    if (dish.specialIngredients && dish.specialIngredients.length > 0) {
-      const special = dish.specialIngredients[0]; 
-      specialHtml = `
-        <div class="result-card__special">
-          <span class="result-card__special-label">Special Ingredient Twist</span>
-          <div class="result-card__special-title">${special.ingredient}</div>
-          <div class="result-card__special-desc">${special.note}</div>
+    return features;
+  }
+
+  // Stagger offsets: alternate up/down ~18% of card height
+  function getStaggerOffset(index) {
+    // Even indices: shift down, Odd indices: shift up
+    // This creates a rhythmic skyline
+    const magnitude = 28; // px — ~18% of a 300px-wide frame's visual height
+    return index % 2 === 0 ? magnitude : -magnitude;
+  }
+
+  function createDishCard(dish, index = 0, context = 'gallery', matchData = null, isFeature = false) {
+    const card = document.createElement('div');
+
+    if (context === 'finder') {
+      const sizeClass = 'result-card';
+      card.className = sizeClass;
+      
+      let matchLabel = '';
+      if (matchData) {
+        if (matchData.type === 'exact') {
+          matchLabel = '<span class="result-card__match exact">Exact Match</span>';
+        } else {
+          matchLabel = `<span class="result-card__match near">Near Match — ${matchData.missing.length} missing</span>`;
+        }
+      }
+      
+      let specialHtml = '';
+      if (dish.specialIngredients && dish.specialIngredients.length > 0) {
+        const special = dish.specialIngredients[0]; // Just show the first one on the card
+        specialHtml = `
+          <div class="result-card__special">
+            <span class="result-card__special-label">Special Ingredient Twist</span>
+            <div class="result-card__special-title">${special.ingredient}</div>
+            <div class="result-card__special-desc">${special.note}</div>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="result-card__image-wrap">
+          <img src="${dish.image}" alt="${dish.name}" class="result-card__image" loading="lazy" />
+          ${matchLabel}
+        </div>
+        <div class="result-card__body">
+          <div class="result-card__meta">${dish.cookingMethod} <span class="result-card__meta-dot">·</span> ${dish.cookTime}</div>
+          <h3 class="result-card__title">${dish.name}</h3>
+          <div class="result-card__context">
+            <div class="result-card__context-how"><strong>Core:</strong> ${dish.coreIngredients.join(', ')}</div>
+            ${matchData && matchData.type === 'near' ? `<div class="result-card__context-missing">Missing: <strong>${matchData.missing.join(', ')}</strong></div>` : ''}
+          </div>
+          ${specialHtml}
         </div>
       `;
+
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `View ${dish.name}`);
+      card.addEventListener('click', () => openModal(dish, card.querySelector('.result-card__image-wrap')));
+      card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.result-card__image-wrap')); });
+      
+      // Stagger entrance delay based on index
+      card.style.transitionDelay = `${(index % 12) * 50}ms`;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          card.classList.add('is-staggered');
+        });
+      });
+
+      return card;
     }
 
-    card.innerHTML = `
-      <div class="result-card__image-wrap">
-        <img src="${dish.image}" alt="${dish.name}" class="result-card__image" loading="lazy" />
-        ${matchLabel}
-      </div>
-      <div class="result-card__body">
-        <div class="result-card__meta">${dish.cookingMethod} <span class="result-card__meta-dot">·</span> ${dish.cookTime}</div>
-        <h3 class="result-card__title">${dish.name}</h3>
-        <div class="result-card__context">
-          <div class="result-card__context-how"><strong>Core:</strong> ${dish.coreIngredients.join(', ')}</div>
-          ${matchData && matchData.type === 'near' ? `<div class="result-card__context-missing">Missing: <strong>${matchData.missing.join(', ')}</strong></div>` : ''}
-        </div>
-        ${specialHtml}
-      </div>
-    `;
-
+    // ---- Gallery Wall Style ----
+    const sizeClass = isFeature ? 'dish-card--feature' : 'dish-card--reg';
+    card.className = `dish-card ${sizeClass}`;
+    card.style.setProperty('--delay', `${(index % 4) * 80}ms`);
+    card.style.setProperty('--stagger-y', `${getStaggerOffset(index)}px`);
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', `View ${dish.name}`);
-    card.addEventListener('click', () => openModal(dish, card.querySelector('.result-card__image-wrap')));
-    card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.result-card__image-wrap')); });
-    
-    card.style.transitionDelay = `${(index % 12) * 50}ms`;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        card.classList.add('is-staggered');
-      });
-    });
 
+    const idxText = String(index + 1).padStart(2, '0');
+
+    card.innerHTML = `
+      <div class="dish-card__frame">
+        <div class="dish-card__image-wrap">
+          <div class="dish-card__wipe"></div>
+          <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
+          <div class="dish-card__overlay"></div>
+        </div>
+      </div>
+      <div class="dish-card__placard">
+        <span class="dish-card__placard-idx">${idxText}</span>
+        <span class="dish-card__placard-name">${dish.name}</span>
+        <span class="dish-card__placard-tag">${dish.cuisine} · ${dish.cookingMethod}</span>
+      </div>
+    `;
+
+    card.addEventListener('click', () => openModal(dish, card.querySelector('.dish-card__image-wrap')));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.dish-card__image-wrap')); });
+
+    revealObserver.observe(card);
     return card;
   }
 
-  // ---- GALLERY RADIAL RENDERING ----
-  function initGalleryRadial() {
-    const radialContainer = $('#gallery-radial');
-    if (!radialContainer) return;
+  function renderGallery() {
+    const track = $('#gallery-track');
+    if (!track) return;
 
-    // Use up to 12 dishes from DISHES to match the 12 spots in the reference
-    const displayDishes = DISHES.slice(0, 12);
-    
-    // Positions exactly mimicking the radial scatter layout reference
-    const positions = [
-      // 4 Large Corners (pushed out to avoid overlapping center)
-      { top: '-5%', left: '-5%', rot: -35, size: 'large' },
-      { top: '-5%', right: '-5%', rot: 35, size: 'large' },
-      { bottom: '-5%', left: '-5%', rot: 35, size: 'large' },
-      { bottom: '-5%', right: '-5%', rot: -35, size: 'large' },
+    track.innerHTML = '';
+
+    // Build the ordered dish list: featured first, then regular
+    const featured = DISHES.filter(d => d.featured);
+    const regular = DISHES.filter(d => !d.featured);
+    const ordered = [...featured, ...regular];
+
+    // Determine which indices get the larger "feature" frame
+    const featureSet = new Set(getFeatureIndices(ordered.length));
+
+    // Append 9 sets to create an endless illusion
+    const NUM_SETS = 9;
+    for (let s = 0; s < NUM_SETS; s++) {
+      const setWrapper = document.createElement('div');
+      setWrapper.className = 'gallery__set';
       
-      // 8 Small Inner Ring
-      { top: '8%', left: '50%', tx: '-50%', rot: 0, size: 'small' }, // Top center
-      { bottom: '8%', left: '50%', tx: '-50%', rot: 0, size: 'small' }, // Bottom center
-      { top: '50%', left: '12%', ty: '-50%', rot: -10, size: 'small' }, // Left middle
-      { top: '50%', right: '12%', ty: '-50%', rot: 10, size: 'small' }, // Right middle
-      { top: '22%', left: '26%', rot: -15, size: 'small' }, // Inner top-left
-      { top: '22%', right: '26%', rot: 15, size: 'small' }, // Inner top-right
-      { bottom: '22%', left: '26%', rot: 15, size: 'small' }, // Inner bottom-left
-      { bottom: '22%', right: '26%', rot: -15, size: 'small' } // Inner bottom-right
-    ];
-
-    displayDishes.forEach((dish, i) => {
-      if (!positions[i]) return;
-      const pos = positions[i];
-      
-      const card = document.createElement('div');
-      card.className = `radial-tile radial-tile--${pos.size}`;
-      
-      card.style.setProperty('--r', `${pos.rot}deg`);
-      if (pos.tx) card.style.setProperty('--tx', pos.tx);
-      if (pos.ty) card.style.setProperty('--ty', pos.ty);
-      
-      if (pos.top) card.style.top = pos.top;
-      if (pos.bottom) card.style.bottom = pos.bottom;
-      if (pos.left) card.style.left = pos.left;
-      if (pos.right) card.style.right = pos.right;
-      card.style.setProperty('--delay', `${i * 0.05}s`);
-
-      card.innerHTML = `
-        <div class="radial-tile__image-wrap">
-          <img src="${dish.image}" alt="${dish.name}" class="radial-tile__image" loading="lazy" />
-        </div>
-      `;
-      
-      card.addEventListener('click', () => openModal(dish, card.querySelector('.radial-tile__image-wrap')));
-      radialContainer.appendChild(card);
-    });
-  }
-
-  // ---- 3D KNIFE FEATURE (THREE.JS) ----
-  function init3DKnife() {
-    const container = $('#knife-canvas-container');
-    const shadow = $('#knife-shadow');
-    if (!container || !window.THREE) return;
-
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-
-    const scene = new THREE.Scene();
-    
-    // PerspectiveCamera for subtle depth
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.z = 5;
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // performance
-    container.appendChild(renderer.domElement);
-
-    // Texture Loader
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load('images/knife.png', (texture) => {
-      // Create a plane matching the aspect ratio of the texture
-      const aspect = texture.image.width / texture.image.height;
-      
-      // Calculate plane height so it fits in the view (roughly 3.5 units tall)
-      const planeHeight = 4.5;
-      const planeWidth = planeHeight * aspect;
-      
-      const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
-      const material = new THREE.MeshBasicMaterial({ 
-        map: texture, 
-        transparent: true,
-        side: THREE.DoubleSide // Shows on both sides
+      ordered.forEach((dish, i) => {
+        const isFeature = featureSet.has(i);
+        setWrapper.appendChild(createDishCard(dish, i, 'gallery', null, isFeature));
       });
       
-      const plane = new THREE.Mesh(geometry, material);
-      scene.add(plane);
-
-      // --- Interaction Logic ---
-      let isDragging = false;
-      let previousMousePosition = { x: 0, y: 0 };
-      
-      // Rotation physics
-      let targetRotation = { x: 0, y: 0 };
-      let currentRotation = { x: 0, y: 0 };
-      let angularVelocity = { x: 0, y: 0 };
-      
-      const autoRotateSpeed = 0.003;
-      let prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      // Listeners for interaction
-      const onPointerDown = (e) => {
-        isDragging = true;
-        previousMousePosition = { x: e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0), y: e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0) };
-        angularVelocity = { x: 0, y: 0 }; // stop momentum
-      };
-
-      const onPointerMove = (e) => {
-        if (!isDragging) return;
-        const currentX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-        const currentY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-
-        const deltaMove = {
-          x: currentX - previousMousePosition.x,
-          y: currentY - previousMousePosition.y
-        };
-
-        // Update target rotation
-        targetRotation.y += deltaMove.x * 0.01;
-        targetRotation.x += deltaMove.y * 0.01;
-
-        // Calculate velocity for momentum
-        angularVelocity = {
-          x: deltaMove.y * 0.01,
-          y: deltaMove.x * 0.01
-        };
-
-        previousMousePosition = { x: currentX, y: currentY };
-      };
-
-      const onPointerUp = () => {
-        isDragging = false;
-      };
-
-      // Mouse
-      container.addEventListener('mousedown', onPointerDown);
-      window.addEventListener('mousemove', onPointerMove);
-      window.addEventListener('mouseup', onPointerUp);
-      
-      // Touch
-      container.addEventListener('touchstart', onPointerDown, {passive: true});
-      window.addEventListener('touchmove', onPointerMove, {passive: true});
-      window.addEventListener('touchend', onPointerUp);
-
-      // Render Loop
-      const animate = () => {
-        requestAnimationFrame(animate);
-        
-        if (!isDragging) {
-          // Apply momentum decay
-          angularVelocity.x *= 0.92;
-          angularVelocity.y *= 0.92;
-          
-          targetRotation.x += angularVelocity.x;
-          targetRotation.y += angularVelocity.y;
-          
-          // Auto-rotation when idle
-          if (!prefersReducedMotion && Math.abs(angularVelocity.x) < 0.001 && Math.abs(angularVelocity.y) < 0.001) {
-            targetRotation.y += autoRotateSpeed;
-          }
-        }
-        
-        // Smoothly interpolate current rotation to target rotation
-        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.15;
-        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.15;
-        
-        plane.rotation.x = currentRotation.x;
-        plane.rotation.y = currentRotation.y;
-        
-        // Update CSS Shadow dynamically based on pitch (x rotation)
-        if (shadow) {
-          // Pitch changes the visual 'height' or depth of the object
-          const pitchFactor = Math.abs(Math.cos(currentRotation.x));
-          
-          const scaleX = 0.5 + pitchFactor * 0.5;
-          const opacity = 0.1 + (pitchFactor * 0.2);
-          
-          shadow.style.transform = `translateX(-50%) scaleX(${scaleX})`;
-          shadow.style.opacity = opacity;
-        }
-
-        renderer.render(scene, camera);
-      };
-
-      animate();
-    });
+      track.appendChild(setWrapper);
+    }
     
-    // Handle resize
-    window.addEventListener('resize', () => {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      if (width === 0 || height === 0) return;
-      renderer.setSize(width, height);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+    // Position scroll at the middle set for infinite loop buffer
+    requestAnimationFrame(() => {
+      const carousel = $('#gallery-carousel');
+      if (carousel && track.firstElementChild) {
+        // Measure one set's width (including the 20px gap between sets)
+        const setWidth = track.firstElementChild.offsetWidth + 20;
+        carousel.scrollLeft = setWidth * 4;
+      }
     });
   }
 
-  initGalleryRadial();
-  init3DKnife();
+  const galleryCarousel = $('#gallery-carousel');
+  if (galleryCarousel) {
+    let isResetting = false;
+
+    galleryCarousel.addEventListener('scroll', () => {
+      if (isResetting) return;
+      const track = $('#gallery-track');
+      if (!track || !track.firstElementChild) return;
+      
+      const setWidth = track.firstElementChild.offsetWidth + 20;
+      
+      // If we scroll into the early sets, jump forward
+      if (galleryCarousel.scrollLeft < setWidth * 3) {
+        isResetting = true;
+        galleryCarousel.scrollLeft += setWidth;
+        isResetting = false;
+      }
+      // If we scroll into the late sets, jump backward
+      else if (galleryCarousel.scrollLeft > setWidth * 5) {
+        isResetting = true;
+        galleryCarousel.scrollLeft -= setWidth;
+        isResetting = false;
+      }
+    });
+    
+    // Auto-drift loop
+    let driftSpeed = 0.5;
+    let driftRaf;
+    let isHoveringGallery = false;
+    
+    galleryCarousel.addEventListener('mouseenter', () => isHoveringGallery = true);
+    galleryCarousel.addEventListener('mouseleave', () => isHoveringGallery = false);
+
+    function driftLoop() {
+      if (!isHoveringGallery && !isDown && !isResetting) {
+        galleryCarousel.scrollLeft += driftSpeed;
+        
+        // Loop back check
+        const track = $('#gallery-track');
+        if (track && track.firstElementChild) {
+          const setWidth = track.firstElementChild.offsetWidth + 20;
+          if (galleryCarousel.scrollLeft > setWidth * 5) {
+            isResetting = true;
+            galleryCarousel.scrollLeft -= setWidth;
+            isResetting = false;
+          }
+        }
+      }
+      driftRaf = requestAnimationFrame(driftLoop);
+    }
+    
+    // Start drift if not prefers-reduced-motion
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      driftLoop();
+    }
+    
+    // Drag to scroll
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let isDragging = false;
+
+    galleryCarousel.addEventListener('pointerdown', (e) => {
+      isDown = true;
+      isDragging = false;
+      galleryCarousel.style.cursor = 'grabbing';
+      startX = e.pageX - galleryCarousel.offsetLeft;
+      scrollLeft = galleryCarousel.scrollLeft;
+    });
+
+    galleryCarousel.addEventListener('pointerleave', () => {
+      isDown = false;
+      galleryCarousel.style.cursor = '';
+    });
+
+    galleryCarousel.addEventListener('pointerup', () => {
+      isDown = false;
+      galleryCarousel.style.cursor = '';
+    });
+
+    galleryCarousel.addEventListener('pointermove', (e) => {
+      if (!isDown) return;
+      const x = e.pageX - galleryCarousel.offsetLeft;
+      const walk = (x - startX) * 2; // scroll multiplier
+      if (Math.abs(walk) > 10) isDragging = true;
+      galleryCarousel.scrollLeft = scrollLeft - walk;
+    });
+    
+    galleryCarousel.addEventListener('click', (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, { capture: true });
+  }
+
+  renderGallery();
 
   // ---- MODAL ----
   const modal = $('#dish-modal');
