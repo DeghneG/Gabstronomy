@@ -287,21 +287,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const radialContainer = $('#gallery-radial');
     if (!radialContainer) return;
 
-    // Use up to 10 dishes from DISHES
-    const displayDishes = DISHES.slice(0, 10);
+    // Use up to 12 dishes from DISHES to match the 12 spots in the reference
+    const displayDishes = DISHES.slice(0, 12);
     
-    // Positions mimicking the radial scatter layout reference
+    // Positions exactly mimicking the radial scatter layout reference
     const positions = [
-      { top: '10%', left: '12%', rot: -20, size: 'large' }, // Top left
-      { top: '12%', right: '15%', rot: 25, size: 'large' }, // Top right
-      { bottom: '15%', left: '15%', rot: 15, size: 'large' }, // Bottom left
-      { bottom: '12%', right: '12%', rot: -25, size: 'large' }, // Bottom right
-      { top: '5%', left: '50%', tx: '-50%', rot: 5, size: 'medium' }, // Top middle
-      { bottom: '5%', left: '50%', tx: '-50%', rot: -5, size: 'medium' }, // Bottom middle
-      { top: '45%', left: '3%', ty: '-50%', rot: -12, size: 'small' }, // Left middle
-      { top: '50%', right: '3%', ty: '-50%', rot: 15, size: 'small' }, // Right middle
-      { top: '25%', left: '28%', rot: 10, size: 'small' }, // Inner top-left
-      { bottom: '28%', right: '28%', rot: -10, size: 'small' } // Inner bottom-right
+      // 4 Large Corners (pushed out to avoid overlapping center)
+      { top: '-5%', left: '-5%', rot: -35, size: 'large' },
+      { top: '-5%', right: '-5%', rot: 35, size: 'large' },
+      { bottom: '-5%', left: '-5%', rot: 35, size: 'large' },
+      { bottom: '-5%', right: '-5%', rot: -35, size: 'large' },
+      
+      // 8 Small Inner Ring
+      { top: '8%', left: '50%', tx: '-50%', rot: 0, size: 'small' }, // Top center
+      { bottom: '8%', left: '50%', tx: '-50%', rot: 0, size: 'small' }, // Bottom center
+      { top: '50%', left: '12%', ty: '-50%', rot: -10, size: 'small' }, // Left middle
+      { top: '50%', right: '12%', ty: '-50%', rot: 10, size: 'small' }, // Right middle
+      { top: '22%', left: '26%', rot: -15, size: 'small' }, // Inner top-left
+      { top: '22%', right: '26%', rot: 15, size: 'small' }, // Inner top-right
+      { bottom: '22%', left: '26%', rot: 15, size: 'small' }, // Inner bottom-left
+      { bottom: '22%', right: '26%', rot: -15, size: 'small' } // Inner bottom-right
     ];
 
     displayDishes.forEach((dish, i) => {

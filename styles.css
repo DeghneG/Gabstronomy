@@ -220,7 +220,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery__header{max-width:var(--container);margin:0 auto;padding:4rem var(--gutter) 2rem}
 .gallery__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:.5rem}
 .gallery__subtitle{color:var(--ink-s);font-size:1rem}
-.gallery-radial{position:relative;width:100%;min-height:800px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:4rem 0}
+.gallery-radial{position:relative;width:100%;min-height:1000px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:4rem 0}
 .gallery-center{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .knife-canvas-container{width:400px;height:400px;position:relative;z-index:2;mix-blend-mode:multiply;cursor:grab}
 .knife-canvas-container:active{cursor:grabbing}
@@ -230,18 +230,18 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery-center__btn{padding:0.75rem 2rem;background:linear-gradient(135deg, #e3a9f0, #f08960);color:var(--white);border-radius:100px;font-weight:600;font-size:0.9375rem;border:none;cursor:pointer;transition:transform 0.3s cubic-bezier(.16,1,.3,1), box-shadow 0.3s ease}
 .gallery-center__btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(240,137,96,0.3)}
 
-.radial-tile{position:absolute;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.1);opacity:0;transform:translateY(40px) rotate(var(--r, 0deg));animation:tileRise 0.8s cubic-bezier(.16,1,.3,1) var(--delay, 0s) forwards;background:var(--white);padding:8px;border:1px solid var(--border-l)}
-.radial-tile:hover{z-index:20 !important;box-shadow:0 15px 40px rgba(0,0,0,0.2)}
-.radial-tile__image-wrap{overflow:hidden;position:relative}
+.radial-tile{position:absolute;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.15);opacity:0;transform:translateY(40px) rotate(var(--r, 0deg));animation:tileRise 0.8s cubic-bezier(.16,1,.3,1) var(--delay, 0s) forwards}
+.radial-tile:hover{z-index:20 !important;box-shadow:0 15px 40px rgba(0,0,0,0.25)}
+.radial-tile__image-wrap{overflow:hidden;position:relative;width:100%;height:100%}
 .radial-tile__image{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.6s cubic-bezier(.16,1,.3,1)}
 .radial-tile:hover .radial-tile__image{transform:scale(1.05)}
 
 @keyframes tileRise{to{opacity:1;transform:rotate(var(--r, 0deg)) translateY(0) translateX(var(--tx, 0)) translateY(var(--ty, 0)) scale(var(--s, 1))}}
 
 /* Size variants based on reference */
-.radial-tile--large{width:260px;height:340px}
-.radial-tile--medium{width:200px;height:260px}
-.radial-tile--small{width:160px;height:200px}
+.radial-tile--large{width:320px;height:420px}
+.radial-tile--medium{width:220px;height:280px}
+.radial-tile--small{width:160px;height:210px}
 
 @media (max-width: 1024px) {
   .gallery-radial{min-height:auto;flex-direction:column;gap:3rem}
