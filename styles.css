@@ -94,8 +94,8 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;padding:6rem var(--gutter);overflow:hidden}
 .hero__side-label{position:absolute;top:50%;left:-2rem;transform:rotate(-90deg) translateX(-50%);transform-origin:left top;font-size:.6875rem;font-weight:600;letter-spacing:.12em;color:var(--canvas);text-transform:uppercase;z-index:10;opacity:0}
 .start-hero .hero__side-label{animation:fadeUp 1s 0.2s var(--ease-out) forwards}
-.hero__image-wrap{position:absolute;inset:0;overflow:hidden}
-.hero__image{width:100%;height:100%;object-fit:cover;object-position:center;will-change:transform;transform:scale(1.1)}
+.hero__image-wrap{position:absolute;top:-10vh;bottom:-10vh;left:0;right:0;overflow:hidden}
+.hero__image{width:100%;height:100%;object-fit:cover;object-position:center;will-change:transform}
 .hero__overlay{position:absolute;inset:0;background:linear-gradient(to right, rgba(20,18,16,0.9) 0%, rgba(20,18,16,0.4) 100%);z-index:2}
 
 /* Hero Scroll Indicator */

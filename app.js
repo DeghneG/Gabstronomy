@@ -926,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (scrollY < heroH) {
             // Shift image down as user scrolls (parallax depth)
             const offset = scrollY * 0.3;
-            heroImage.style.transform = `scale(1.1) translateY(${offset}px)`;
+            heroImage.style.transform = `translateY(${offset}px)`;
           }
           ticking = false;
         });
