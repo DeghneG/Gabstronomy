@@ -424,12 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    galleryCarousel.addEventListener('wheel', (e) => {
-      if (e.shiftKey) return;
-      e.preventDefault();
-      galleryCarousel.scrollLeft += e.deltaY * 2.5;
-    }, { passive: false });
-    
     // Auto-drift loop
     let driftSpeed = 0.5;
     let driftRaf;
