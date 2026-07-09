@@ -3,9 +3,9 @@
 // ============================================================
 
 const TAXONOMY = {
-  cuisines: ["Filipino"],
+  cuisines: ["Filipino", "Spanish", "Swiss", "Chinese"],
   mealTypes: ["Breakfast", "Lunch / Dinner", "Dessert", "Soups"],
-  cookingMethods: ["Braised / Slow-cooked", "Sautéed / Stir-fried", "Boiled / Simmered", "Grilled", "Raw / No-cook", "Roasted"],
+  cookingMethods: ["Braised / Slow-cooked", "Sautéed / Stir-fried", "Boiled / Simmered", "Grilled", "Raw / No-cook", "Roasted", "Fried / Deep-fried"],
   ingredientCategories: {
     vegetables: ["ampalaya", "bellpepper", "carrot", "kalabasa", "kamatis", "kamote leaves", "kangkong", "malunggay", "mushroom", "okra", "patola", "pechay", "potatoes", "sayote", "sitaw", "talong", "upo"],
     meat: {
@@ -104,7 +104,7 @@ const DISHES = [
     name: "Garlic Chicken Mushroom",
     tagline: "Rich, savory, and deeply comforting.",
     description: "A savory chicken dish bathed in a rich, buttery mushroom sauce. The technique of cold-starting garlic cloves infuses the oil, creating a deeply aromatic base.",
-    cuisine: "Filipino",
+    cuisine: "Spanish",
     mealType: "Lunch / Dinner",
     cookingMethod: "Sautéed / Stir-fried",
     cookTime: "30-35 min",
@@ -131,9 +131,9 @@ const DISHES = [
     name: "Chicken Cordon Bleu",
     tagline: "Crispy on the outside, gooey on the inside.",
     description: "A decadent classic featuring tender chicken breast rolled around savory ham and melted cheese, coated in breadcrumbs and fried to golden perfection.",
-    cuisine: "Filipino",
+    cuisine: "Swiss",
     mealType: "Lunch / Dinner",
-    cookingMethod: "Sautéed / Stir-fried",
+    cookingMethod: "Fried / Deep-fried",
     cookTime: "30-35 min",
     servings: 4,
     difficulty: "Medium",
@@ -179,7 +179,7 @@ const DISHES = [
     name: "Sweet and Sour Bukaw",
     tagline: "A delightful balance of sweet, sour, and savory.",
     description: "Crispy fried fish smothered in a thick, vibrant sauce made from pineapple, ketchup, and colorful julienned vegetables.",
-    cuisine: "Filipino",
+    cuisine: "Chinese",
     mealType: "Lunch / Dinner",
     cookingMethod: "Sautéed / Stir-fried",
     cookTime: "20-30 min",
@@ -255,7 +255,7 @@ const DISHES = [
     name: "Sweet and Spicy Pork Ribs",
     tagline: "Sticky, savory, and perfectly tender.",
     description: "Tender pork ribs braised in a rich, sweet, and fiery tomato-based sauce, balanced with savory soy.",
-    cuisine: "Filipino",
+    cuisine: "Chinese",
     mealType: "Lunch / Dinner",
     cookingMethod: "Braised / Slow-cooked",
     cookTime: "40-50 min",
