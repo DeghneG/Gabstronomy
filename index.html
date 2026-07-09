@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lenis@1.1.2/dist/lenis.min.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -87,6 +88,12 @@
         </svg>
       </a>
     </div>
+
+    <!-- Scroll Indicator -->
+    <div class="hero__scroll">
+      <span class="hero__scroll-text">Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
   </section>
 
   <!-- ============================================ -->
@@ -149,12 +156,16 @@
   </section>
 
   <!-- ============================================ -->
-  <!-- SECTION DIVIDER                               -->
+  <!-- MARQUEE STRIP                                 -->
   <!-- ============================================ -->
-  <div class="divider" aria-hidden="true">
-    <span class="divider__line"></span>
-    <span class="divider__mark">✦</span>
-    <span class="divider__line"></span>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <!-- We duplicate items to create a seamless loop -->
+      <div class="marquee__item">Filipino Home Cooking <span class="marquee__dot"></span> Curated <span class="marquee__dot"></span> Gabstronomy <span class="marquee__dot"></span> Culinary Exploration <span class="marquee__dot"></span> Discover Your Next Meal <span class="marquee__dot"></span></div>
+      <div class="marquee__item">Filipino Home Cooking <span class="marquee__dot"></span> Curated <span class="marquee__dot"></span> Gabstronomy <span class="marquee__dot"></span> Culinary Exploration <span class="marquee__dot"></span> Discover Your Next Meal <span class="marquee__dot"></span></div>
+      <div class="marquee__item">Filipino Home Cooking <span class="marquee__dot"></span> Curated <span class="marquee__dot"></span> Gabstronomy <span class="marquee__dot"></span> Culinary Exploration <span class="marquee__dot"></span> Discover Your Next Meal <span class="marquee__dot"></span></div>
+      <div class="marquee__item">Filipino Home Cooking <span class="marquee__dot"></span> Curated <span class="marquee__dot"></span> Gabstronomy <span class="marquee__dot"></span> Culinary Exploration <span class="marquee__dot"></span> Discover Your Next Meal <span class="marquee__dot"></span></div>
+    </div>
   </div>
 
   <!-- ============================================ -->

@@ -3,6 +3,25 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // --- LENIS SMOOTH SCROLL ---
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+    direction: 'vertical',
+    gestureDirection: 'vertical',
+    smooth: true,
+    mouseMultiplier: 1,
+    smoothTouch: false,
+    touchMultiplier: 2,
+    infinite: false,
+  });
+
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
   // --- PRELOADER & HERO ENTRANCE ---
   const preloader = document.getElementById('preloader');
   const counterEl = document.getElementById('preloader-counter');
@@ -79,6 +98,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.3 });
   sections.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+
+  // Nav hide-on-scroll
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      nav.classList.add('nav--scrolled');
+      if (window.scrollY > lastScrollY && !mobileMenu.classList.contains('open')) {
+        nav.classList.add('nav--hidden');
+      } else {
+        nav.classList.remove('nav--hidden');
+      }
+    } else {
+      nav.classList.remove('nav--scrolled');
+      nav.classList.remove('nav--hidden');
+    }
+    lastScrollY = window.scrollY;
+  });
 
   // ---- BUILD FILTER PILLS ----
   function buildFilterPills(containerId, items, filterGroup, filterKey) {
@@ -201,11 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
+        entry.target.classList.add('is-revealed');
         revealObserver.unobserve(entry.target);
       }
     });
   }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+
+  // Add Trio items to reveal observer
+  $$('.trio__item').forEach(item => revealObserver.observe(item));
 
   // Feature frame indices — distributed evenly, not clustered
   function getFeatureIndices(total) {
@@ -276,7 +315,15 @@ document.addEventListener('DOMContentLoaded', () => {
       card.setAttribute('aria-label', `View ${dish.name}`);
       card.addEventListener('click', () => openModal(dish, card.querySelector('.result-card__image-wrap')));
       card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.result-card__image-wrap')); });
-      revealObserver.observe(card);
+      
+      // Stagger entrance delay based on index
+      card.style.transitionDelay = `${(index % 12) * 50}ms`;
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          card.classList.add('is-staggered');
+        });
+      });
+
       return card;
     }
 
@@ -383,6 +430,37 @@ document.addEventListener('DOMContentLoaded', () => {
       galleryCarousel.scrollLeft += e.deltaY * 2.5;
     }, { passive: false });
     
+    // Auto-drift loop
+    let driftSpeed = 0.5;
+    let driftRaf;
+    let isHoveringGallery = false;
+    
+    galleryCarousel.addEventListener('mouseenter', () => isHoveringGallery = true);
+    galleryCarousel.addEventListener('mouseleave', () => isHoveringGallery = false);
+
+    function driftLoop() {
+      if (!isHoveringGallery && !isDown && !isResetting) {
+        galleryCarousel.scrollLeft += driftSpeed;
+        
+        // Loop back check
+        const track = $('#gallery-track');
+        if (track && track.firstElementChild) {
+          const setWidth = track.firstElementChild.offsetWidth + 20;
+          if (galleryCarousel.scrollLeft > setWidth * 5) {
+            isResetting = true;
+            galleryCarousel.scrollLeft -= setWidth;
+            isResetting = false;
+          }
+        }
+      }
+      driftRaf = requestAnimationFrame(driftLoop);
+    }
+    
+    // Start drift if not prefers-reduced-motion
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      driftLoop();
+    }
+    
     // Drag to scroll
     let isDown = false;
     let startX;
@@ -472,14 +550,24 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const stepList = $('#modal-steps');
       stepList.innerHTML = '';
-      dish.steps.forEach(s => {
+      dish.steps.forEach((s, idx) => {
         const li = document.createElement('li');
         li.innerHTML = s;
+        // Cascade animation delay (base delay + staggered index)
+        li.style.animationDelay = `${450 + (idx * 50)}ms`;
         stepList.appendChild(li);
+      });
+
+      // Apply cascade delays to ingredients too
+      $$('#modal-ingredients li').forEach((li, idx) => {
+        li.style.animationDelay = `${400 + (idx * 50)}ms`;
       });
 
       modal.hidden = false;
       document.body.style.overflow = 'hidden';
+      // Temporarily pause lenis
+      if (typeof lenis !== 'undefined') lenis.stop();
+      
       modalClose.focus();
     };
 
@@ -498,6 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const doClose = () => {
       modal.hidden = true;
       document.body.style.overflow = '';
+      if (typeof lenis !== 'undefined') lenis.start();
       $('#modal-image').src = '';
     };
 
@@ -586,10 +675,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update steps visibility
     for (let i = 1; i <= totalSteps; i++) {
       const stepEl = $(`#wizard-step-${i}`);
+      // Clean up classes
+      stepEl.classList.remove('is-active', 'is-exiting-left', 'is-exiting-right');
+      
       if (i === currentStep) {
         stepEl.classList.add('is-active');
+      } else if (i < currentStep) {
+        stepEl.classList.add('is-exiting-left');
       } else {
-        stepEl.classList.remove('is-active');
+        stepEl.classList.add('is-exiting-right');
       }
     }
     
