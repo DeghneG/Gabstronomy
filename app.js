@@ -732,6 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ---- CUSTOM CURSOR ----
   const cursor = document.getElementById('cursor');
+  const cursorLabel = document.getElementById('cursor-label');
   if (cursor) {
     let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
     window.addEventListener('mousemove', e => {
@@ -743,6 +744,11 @@ document.addEventListener('DOMContentLoaded', () => {
       curY += (mouseY - curY) * 0.18;
       cursor.style.left = curX + 'px';
       cursor.style.top = curY + 'px';
+      // Sync cursor label position
+      if (cursorLabel) {
+        cursorLabel.style.left = curX + 'px';
+        cursorLabel.style.top = curY + 'px';
+      }
       requestAnimationFrame(animateCursor);
     }
     animateCursor();
@@ -768,5 +774,98 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
     hoverObserver.observe(document.body, { childList: true, subtree: true });
+
+    // --- CURSOR CONTEXT LABEL ---
+    if (cursorLabel) {
+      const cardSelector = '.dish-card, .result-card, .trio__item';
+      
+      document.addEventListener('mouseenter', (e) => {
+        if (e.target.closest(cardSelector)) {
+          cursorLabel.classList.add('is-visible');
+        }
+      }, true);
+      
+      document.addEventListener('mouseleave', (e) => {
+        if (e.target.closest(cardSelector)) {
+          cursorLabel.classList.remove('is-visible');
+        }
+      }, true);
+    }
+  }
+
+  // ---- SCROLL REVEAL ----
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  if (!prefersReducedMotion) {
+    const revealEls = document.querySelectorAll('.reveal, .divider');
+    const scrollRevealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          scrollRevealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+    
+    revealEls.forEach(el => scrollRevealObserver.observe(el));
+  } else {
+    // Skip animations — show everything immediately
+    document.querySelectorAll('.reveal, .divider').forEach(el => el.classList.add('is-revealed'));
+  }
+
+  // ---- HERO PARALLAX ----
+  const heroImage = document.getElementById('hero-image');
+  const heroSection = document.getElementById('hero');
+  if (heroImage && heroSection && !prefersReducedMotion) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const heroH = heroSection.offsetHeight;
+          if (scrollY < heroH) {
+            // Shift image down as user scrolls (parallax depth)
+            const offset = scrollY * 0.3;
+            heroImage.style.transform = `scale(1.1) translateY(${offset}px)`;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
+
+  // ---- MAGNETIC BUTTONS ----
+  if (!prefersReducedMotion) {
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        // Subtle pull — max ~6px displacement
+        const pull = 0.25;
+        btn.style.transform = `translate(${x * pull}px, ${y * pull}px)`;
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = '';
+      });
+    });
+  }
+
+  // ---- 3D TILT ON TRIO ITEMS ----
+  if (!prefersReducedMotion) {
+    document.querySelectorAll('.trio__item').forEach(item => {
+      item.addEventListener('mousemove', (e) => {
+        const rect = item.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 to 0.5
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        const tiltX = y * -8;  // degrees
+        const tiltY = x * 8;
+        item.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px)`;
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.transform = '';
+      });
+    });
   }
 });

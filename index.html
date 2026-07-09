@@ -88,7 +88,7 @@
         <span class="word-wrap"><span class="hero__word" style="animation-delay: 1.55s">Cook'</span></span>
         <span class="word-wrap"><span class="hero__word" style="animation-delay: 1.60s">Crisis</span></span>
       </p>
-      <a href="#gallery" class="hero__cta" id="hero-cta" style="animation-delay: 1.70s">
+      <a href="#gallery" class="hero__cta magnetic" id="hero-cta" style="animation-delay: 1.70s">
         Explore Collection
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M4 10h12M12 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -102,10 +102,10 @@
   <!-- ============================================ -->
   <section class="about" id="about">
     <div class="about__inner">
-      <h2 class="about__title">About</h2>
-      <p class="about__text">Welcome — this is a little corner of the internet built around a simple love for cooking.</p>
-      <p class="about__text">Here, you'll find the dishes I make, how I make them, and the small details that turn a good meal into one worth repeating. Every recipe on this site is something I've actually cooked, tested, and come back to.</p>
-      <p class="about__text">You'll also find the Food Finder — a tool born out of a familiar kitchen moment: standing in front of what you have on hand, with no clear idea what to make. Tell it what's in your kitchen, and it'll help you figure out what's possible, so nothing goes to waste and nothing's off-limits just because you didn't plan ahead.</p>
+      <h2 class="about__title reveal">About</h2>
+      <p class="about__text reveal reveal--delay-1">Welcome — this is a little corner of the internet built around a simple love for cooking.</p>
+      <p class="about__text reveal reveal--delay-2">Here, you'll find the dishes I make, how I make them, and the small details that turn a good meal into one worth repeating. Every recipe on this site is something I've actually cooked, tested, and come back to.</p>
+      <p class="about__text reveal reveal--delay-3">You'll also find the Food Finder — a tool born out of a familiar kitchen moment: standing in front of what you have on hand, with no clear idea what to make. Tell it what's in your kitchen, and it'll help you figure out what's possible, so nothing goes to waste and nothing's off-limits just because you didn't plan ahead.</p>
     </div>
   </section>
 
@@ -123,7 +123,7 @@
   <!-- ============================================ -->
   <section class="trio" id="featured">
     <div class="trio__header">
-      <h2 class="trio__title">My Top 3</h2>
+      <h2 class="trio__title reveal">My Top 3</h2>
     </div>
     <div class="trio__inner">
       <div class="trio__item" onclick="openModal('garlic-chicken-mushroom')">
@@ -173,8 +173,8 @@
       <div class="gallery__header-text">
         <div class="gallery__header-top" style="display:flex; justify-content:space-between; align-items:flex-end;">
           <div>
-            <h2 class="gallery__title">The Collection</h2>
-            <p class="gallery__subtitle">A curated selection of dishes worth making — and making again.</p>
+            <h2 class="gallery__title reveal">The Collection</h2>
+            <p class="gallery__subtitle reveal reveal--delay-1">A curated selection of dishes worth making — and making again.</p>
           </div>
         </div>
       </div>
@@ -202,8 +202,8 @@
   <!-- ============================================ -->
   <section class="finder" id="finder">
     <div class="finder__header">
-      <h2 class="finder__title">What's in your kitchen?</h2>
-      <p class="finder__subtitle">Tell us what you have, and we'll tell you what dish you can make.</p>
+      <h2 class="finder__title reveal">What's in your kitchen?</h2>
+      <p class="finder__subtitle reveal reveal--delay-1">Tell us what you have, and we'll tell you what dish you can make.</p>
     </div>
 
     <!-- Wizard Container -->
@@ -354,6 +354,7 @@
   <svg id="cursor" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
     <path d="M 19 21 L 14 16 L 2 2 C 4 1 12 5 16 13 L 21 18 L 19 21 Z" />
   </svg>
+  <div id="cursor-label">View</div>
 
   <!-- Timer Overlay -->
   <div class="timer-overlay" id="timer-overlay" hidden>
