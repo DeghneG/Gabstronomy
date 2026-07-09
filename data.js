@@ -315,7 +315,7 @@ const DISHES = [
       "In the same pan, fry the pork until golden brown, then set aside.",
       "Using the same pan, sauté the onion, garlic, and tomato until fragrant. Add the bagoong and mix well.",
       "Add the pork back in, season with salt, black pepper, and sugar to taste. Add water and simmer until the pork softens.",
-      "Add the seared eggplant and siling haba. Mix gently, turn off the heat, and let it rest for 5 minutes before serving."
+      "Add the seared eggplant and siling haba. Mix gently, turn off the heat, and let it rest for 5 minutes before serving. <button class='step-timer-btn' data-minutes='5' onclick='event.stopPropagation(); window.startRestTimer && window.startRestTimer(this)'>⏱ Start 5-min Timer</button>"
     ],
     image: "images/pork_binagoongan.png",
     featured: false

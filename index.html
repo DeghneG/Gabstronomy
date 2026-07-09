@@ -34,6 +34,14 @@
         <a href="#gallery" class="nav__link" id="nav-gallery">Gallery</a>
         <a href="#finder" class="nav__link" id="nav-finder">Finder</a>
       </nav>
+      <button class="nav__sound-toggle" id="sound-toggle" aria-label="Toggle sound effects" title="Toggle kitchen sounds">
+        <svg class="nav__sound-icon nav__sound-icon--off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+        </svg>
+        <svg class="nav__sound-icon nav__sound-icon--on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+      </button>
       <button class="nav__burger" id="nav-burger" aria-label="Toggle navigation menu">
         <span></span><span></span>
       </button>
@@ -347,7 +355,27 @@
     <path d="M 19 21 L 14 16 L 2 2 C 4 1 12 5 16 13 L 21 18 L 19 21 Z" />
   </svg>
 
+  <!-- Timer Overlay -->
+  <div class="timer-overlay" id="timer-overlay" hidden>
+    <div class="timer-overlay__backdrop"></div>
+    <div class="timer-overlay__content">
+      <button class="timer-overlay__close" id="timer-close" aria-label="Close timer">&times;</button>
+      <div class="timer-overlay__icon">🍳</div>
+      <p class="timer-overlay__label">Resting Time</p>
+      <div class="timer-overlay__display" id="timer-display">5:00</div>
+      <div class="timer-overlay__ring-wrap">
+        <svg class="timer-overlay__ring" viewBox="0 0 200 200">
+          <circle class="timer-overlay__ring-bg" cx="100" cy="100" r="90" />
+          <circle class="timer-overlay__ring-progress" id="timer-ring" cx="100" cy="100" r="90" />
+        </svg>
+      </div>
+      <p class="timer-overlay__hint" id="timer-hint">Let the flavors meld together…</p>
+      <button class="timer-overlay__btn" id="timer-btn">Pause</button>
+    </div>
+  </div>
+
   <script src="data.js"></script>
+  <script src="audio.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

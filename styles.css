@@ -75,6 +75,18 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .nav__link::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--ink);transition:width .3s var(--ease)}
 .nav__link:hover,.nav__link.active{color:var(--ink)}
 .nav__link:hover::after,.nav__link.active::after{width:100%}
+
+/* Sound Toggle */
+.nav__sound-toggle{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);color:var(--ink-s);transition:all .3s var(--ease);margin-left:0.5rem;position:relative;overflow:hidden}
+.nav__sound-toggle::before{content:'';position:absolute;inset:0;border-radius:50%;background:var(--ink);transform:scale(0);transition:transform .3s var(--ease)}
+.nav__sound-toggle:hover{border-color:var(--ink-t);color:var(--ink)}
+.nav__sound-toggle.is-active{border-color:var(--ink);color:var(--canvas)}
+.nav__sound-toggle.is-active::before{transform:scale(1)}
+.nav__sound-toggle svg{position:relative;z-index:1}
+.nav__sound-toggle.is-active svg{stroke:var(--canvas)}
+@keyframes soundPulse{0%,100%{box-shadow:0 0 0 0 rgba(243,237,228,0.15)}50%{box-shadow:0 0 0 6px rgba(243,237,228,0)}}
+.nav__sound-toggle.is-active{animation:soundPulse 2s ease-in-out infinite}
+
 .nav__burger{display:none;flex-direction:column;gap:5px;width:24px;padding:4px 0}
 .nav__burger span{display:block;height:1.5px;background:var(--ink);transition:all .3s var(--ease);transform-origin:center}
 .nav__burger.open span:first-child{transform:rotate(45deg) translate(2.5px,2.5px)}
@@ -407,6 +419,12 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .modal__steps li{counter-increment:step;font-size:.875rem;line-height:1.7;padding:.5rem 0 .5rem 2rem;position:relative;border-bottom:1px solid var(--border-l)}
 .modal__steps li:last-child{border-bottom:none}
 .modal__steps li::before{content:counter(step);position:absolute;left:0;top:.5rem;font-family:var(--serif);font-size:1.125rem;color:var(--ink-t)}
+
+/* Step Timer Button (inline in recipe steps) */
+.step-timer-btn{display:inline-flex;align-items:center;gap:0.35rem;margin-top:0.5rem;padding:0.4rem 1rem;background:transparent;border:1px solid var(--border);border-radius:100px;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-s);cursor:pointer !important;transition:all 0.3s var(--ease);vertical-align:middle}
+.step-timer-btn:hover{border-color:var(--ink);color:var(--ink);background:rgba(243,237,228,0.06);transform:translateY(-1px)}
+.step-timer-btn:active{transform:scale(0.96)}
+
 .is-fav-ingredient { position: relative; }
 .is-fav-ingredient::after {
   content: attr(data-tooltip);
@@ -430,6 +448,29 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .is-fav-ingredient:hover::after {
   opacity: 1;
 }
+
+/* --- Timer Overlay --- */
+.timer-overlay{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:2rem}
+.timer-overlay[hidden]{display:none}
+.timer-overlay__backdrop{position:absolute;inset:0;background:rgba(20,18,16,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);animation:backdropIn .3s var(--ease)}
+.timer-overlay__content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1rem;padding:3rem 3.5rem;background:rgba(28,26,24,0.7);border:1px solid var(--border);border-radius:24px;backdrop-filter:blur(12px);animation:modalIn .4s var(--ease-out);min-width:320px}
+.timer-overlay__close{position:absolute;top:1rem;right:1rem;font-size:1.5rem;color:var(--ink-s);transition:color .2s;line-height:1;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,0.05)}
+.timer-overlay__close:hover{color:var(--ink);background:rgba(255,255,255,0.1)}
+.timer-overlay__icon{font-size:2.5rem;margin-bottom:0.25rem}
+.timer-overlay__label{font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--ink-t)}
+.timer-overlay__display{font-family:var(--serif);font-size:clamp(3rem,8vw,5rem);letter-spacing:-0.02em;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.timer-overlay__ring-wrap{width:180px;height:180px;position:relative;margin:-0.5rem 0}
+.timer-overlay__ring{width:100%;height:100%;transform:rotate(-90deg)}
+.timer-overlay__ring-bg{fill:none;stroke:var(--border-l);stroke-width:4}
+.timer-overlay__ring-progress{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.timer-overlay__hint{font-size:0.9375rem;color:var(--ink-s);font-style:italic;text-align:center;max-width:260px}
+.timer-overlay__btn{padding:0.65rem 2rem;border:1px solid var(--ink);border-radius:100px;font-size:0.8125rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink);background:transparent;transition:all 0.25s var(--ease)}
+.timer-overlay__btn:hover{background:var(--ink);color:var(--canvas)}
+
+/* Timer complete state */
+.timer-overlay.is-complete .timer-overlay__display{animation:timerPulse 1s ease-in-out infinite}
+.timer-overlay.is-complete .timer-overlay__ring-progress{stroke:#9bc9a6}
+@keyframes timerPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.02)}}
 
 /* --- Footer --- */
 .footer{border-top:1px solid var(--border-l);padding:3rem 0}
