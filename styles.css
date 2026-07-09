@@ -78,17 +78,6 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .nav__link:hover,.nav__link.active{color:var(--ink)}
 .nav__link:hover::after,.nav__link.active::after{width:100%}
 
-/* Sound Toggle */
-.nav__sound-toggle{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);color:var(--ink-s);transition:all .3s var(--ease);margin-left:0.5rem;position:relative;overflow:hidden}
-.nav__sound-toggle::before{content:'';position:absolute;inset:0;border-radius:50%;background:var(--ink);transform:scale(0);transition:transform .3s var(--ease)}
-.nav__sound-toggle:hover{border-color:var(--ink-t);color:var(--ink)}
-.nav__sound-toggle.is-active{border-color:var(--ink);color:var(--canvas)}
-.nav__sound-toggle.is-active::before{transform:scale(1)}
-.nav__sound-toggle svg{position:relative;z-index:1}
-.nav__sound-toggle.is-active svg{stroke:var(--canvas)}
-@keyframes soundPulse{0%,100%{box-shadow:0 0 0 0 rgba(243,237,228,0.15)}50%{box-shadow:0 0 0 6px rgba(243,237,228,0)}}
-.nav__sound-toggle.is-active{animation:soundPulse 2s ease-in-out infinite}
-
 .nav__burger{display:none;flex-direction:column;gap:5px;width:24px;padding:4px 0}
 .nav__burger span{display:block;height:1.5px;background:var(--ink);transition:all .3s var(--ease);transform-origin:center}
 .nav__burger.open span:first-child{transform:rotate(45deg) translate(2.5px,2.5px)}
