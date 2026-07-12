@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tiltX = (py - 0.5) * -MAX_TILT * 2;
         const tiltY = (px - 0.5) * MAX_TILT * 2;
 
-        frame.style.transform = `perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+        frame.style.transform = `perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02) translateZ(40px)`;
 
         const sheenAngle = 90 + tiltY * 3;
         sheen.style.setProperty('--sheen-angle', sheenAngle + 'deg');
