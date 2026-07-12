@@ -335,20 +335,24 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => openModal(dish, card.querySelector('.dish-card__image-wrap')));
     card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.dish-card__image-wrap')); });
 
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const frame = card.querySelector('.dish-card__frame');
-      const sheen = card.querySelector('.dish-card__sheen');
-      const MAX_TILT = 14;
+    const frame = card.querySelector('.dish-card__frame');
+    const sheen = card.querySelector('.dish-card__sheen');
+    const MAX_TILT = 14;
 
-      card.addEventListener('mousemove', (e) => {
+    if (frame && sheen) {
+      card.addEventListener('pointermove', (e) => {
+        if (e.pointerType === 'touch') return; // Disable on touch to preserve scrolling
+        
         const rect = card.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+        
         const px = (e.clientX - rect.left) / rect.width;
         const py = (e.clientY - rect.top) / rect.height;
 
         const tiltX = (py - 0.5) * -MAX_TILT * 2;
         const tiltY = (px - 0.5) * MAX_TILT * 2;
 
-        frame.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+        frame.style.transform = `perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
 
         const sheenAngle = 90 + tiltY * 3;
         sheen.style.setProperty('--sheen-angle', sheenAngle + 'deg');
@@ -356,7 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.setProperty('--shadow-transform', `translateX(${tiltY * 2}px) translateY(${tiltX * -2}px) scale(${1 - Math.abs(tiltX) / 80})`);
       });
 
-      card.addEventListener('mouseleave', () => {
+      card.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'touch') return;
         frame.style.transform = '';
         card.style.setProperty('--shadow-transform', 'translate(0, 0) scale(1)');
       });

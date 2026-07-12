@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { display: flex; align-items: center; justify-content: center; height: 100vh; background: #222; }
+  .dish-card {
+    width: 300px; height: 400px;
+    perspective: 1200px;
+    position: relative;
+    cursor: pointer;
+  }
+  .dish-card::before {
+    content:''; position:absolute; inset:0;
+    box-shadow:0 16px 40px rgba(0,0,0,0.5); opacity:0; z-index:-1;
+    transition:transform 0.15s ease-out, opacity 0.4s ease;
+    transform:var(--shadow-transform, translate(0, 0) scale(1));
+  }
+  .dish-card:hover::before { opacity: 1; }
+  .dish-card__frame {
+    width: 100%; height: 100%;
+    background: #E8E2D8; padding: 12px;
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease-out;
+    box-sizing: border-box;
+  }
+  .dish-card__image-wrap {
+    width: 100%; height: 100%;
+    background: red;
+    transform: translateZ(40px);
+    position: relative;
+  }
+  .dish-card__sheen {
+    position: absolute; inset: 0;
+    background: linear-gradient(var(--sheen-angle, 120deg), rgba(255,255,255,0) 30%, rgba(255,255,255,0.8) 45%, rgba(255,255,255,0) 65%);
+    opacity: 0; pointer-events: none;
+  }
+  .dish-card:hover .dish-card__sheen { opacity: 1; }
+</style>
+</head>
+<body>
+  <div class="dish-card" id="card">
+    <div class="dish-card__frame">
+      <div class="dish-card__image-wrap">
+        <div class="dish-card__sheen"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const card = document.getElementById('card');
+    const frame = card.querySelector('.dish-card__frame');
+    const sheen = card.querySelector('.dish-card__sheen');
+    const MAX_TILT = 14;
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const tiltX = (py - 0.5) * -MAX_TILT * 2;
+      const tiltY = (px - 0.5) * MAX_TILT * 2;
+      frame.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+      sheen.style.setProperty('--sheen-angle', (90 + tiltY * 3) + 'deg');
+      card.style.setProperty('--shadow-transform', `translateX(${tiltY * 2}px) translateY(${tiltX * -2}px) scale(${1 - Math.abs(tiltX) / 80})`);
+    });
+    card.addEventListener('mouseleave', () => {
+      frame.style.transform = '';
+      card.style.setProperty('--shadow-transform', 'translate(0, 0) scale(1)');
+    });
+    window.tiltTestResult = "running";
+    card.addEventListener('mousemove', () => { window.tiltTestResult = "tilted"; });
+  </script>
+</body>
+</html>
