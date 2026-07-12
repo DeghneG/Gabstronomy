@@ -804,68 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   gridObserver.observe(document.body, { childList: true, subtree: true });
 
-  // ---- CUSTOM CURSOR ----
-  const cursor = document.getElementById('cursor');
-  const cursorLabel = document.getElementById('cursor-label');
-  if (cursor) {
-    let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
-    window.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-    function animateCursor(){
-      curX += (mouseX - curX) * 0.18;
-      curY += (mouseY - curY) * 0.18;
-      cursor.style.left = curX + 'px';
-      cursor.style.top = curY + 'px';
-      // Sync cursor label position
-      if (cursorLabel) {
-        cursorLabel.style.left = curX + 'px';
-        cursorLabel.style.top = curY + 'px';
-      }
-      requestAnimationFrame(animateCursor);
-    }
-    animateCursor();
 
-    // Hover state
-    const addHover = () => cursor.classList.add('is-hovering');
-    const rmHover = () => cursor.classList.remove('is-hovering');
-    
-    const hoverSelector = 'a, button, [role="button"], .dish-card, .result-card, .trio__item, .is-fav-ingredient';
-    document.querySelectorAll(hoverSelector).forEach(el => {
-      el.addEventListener('mouseenter', addHover);
-      el.addEventListener('mouseleave', rmHover);
-    });
-
-    // Re-bind hover states on DOM changes (for dynamically rendered cards)
-    const hoverObserver = new MutationObserver(() => {
-      document.querySelectorAll(hoverSelector).forEach(el => {
-        if (!el.dataset.cursorBound) {
-          el.dataset.cursorBound = '1';
-          el.addEventListener('mouseenter', addHover);
-          el.addEventListener('mouseleave', rmHover);
-        }
-      });
-    });
-    hoverObserver.observe(document.body, { childList: true, subtree: true });
-
-    // --- CURSOR CONTEXT LABEL ---
-    if (cursorLabel) {
-      const cardSelector = '.dish-card, .result-card, .trio__item';
-      
-      document.addEventListener('mouseenter', (e) => {
-        if (e.target.closest(cardSelector)) {
-          cursorLabel.classList.add('is-visible');
-        }
-      }, true);
-      
-      document.addEventListener('mouseleave', (e) => {
-        if (e.target.closest(cardSelector)) {
-          cursorLabel.classList.remove('is-visible');
-        }
-      }, true);
-    }
-  }
 
   // ---- SCROLL REVEAL ----
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

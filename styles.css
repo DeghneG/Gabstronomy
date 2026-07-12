@@ -110,7 +110,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .hero__content{position:relative;z-index:5;width:100%;max-width:1200px;text-align:center;display:flex;flex-direction:column;align-items:center;will-change:transform}
 .hero__subtitle{font-family:var(--sans);font-size:0.875rem;text-transform:uppercase;letter-spacing:0.2em;color:var(--ink-s);margin-bottom:50px;opacity:0;transform:translateY(16px)}
 .start-hero .hero__subtitle{animation:fadeUp 0.8s 0.2s var(--ease-out) forwards}
-.hero__title{font-family:var(--serif);font-size:clamp(3rem,9vw,8rem);white-space:nowrap;line-height:1;letter-spacing:0.15em;margin-right:-0.15em;margin-bottom:1rem;padding-bottom:0.5em;overflow:hidden}
+.hero__title{font-family:var(--serif);font-weight:400;font-size:clamp(3rem,9vw,8rem);white-space:nowrap;line-height:1;letter-spacing:0.15em;margin-right:-0.15em;margin-bottom:1rem;padding-bottom:0.5em;overflow:hidden}
 .hero__letter{display:inline-block;opacity:0;transform:translateY(100%)}
 .start-hero .hero__letter{animation:letterReveal .8s var(--ease-out) forwards}
 @keyframes letterReveal{to{opacity:1;transform:translateY(0)}}
@@ -146,7 +146,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 /* --- About Section --- */
 .about{padding:6rem var(--gutter) 2rem;}
 .about__inner{max-width:700px;margin:0 auto;text-align:center;}
-.about__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:1.5rem;}
+.about__title{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:1.5rem;}
 .about__text{font-size:1.0625rem;color:var(--ink-s);line-height:1.7;margin-bottom:1.5rem;}
 .about__text:last-child{margin-bottom:0;}
 
@@ -161,7 +161,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 /* --- Trio Grid --- */
 .trio{padding:4rem var(--gutter)}
 .trio__header{max-width:var(--container);margin:0 auto 2rem;text-align:center}
-.trio__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em}
+.trio__title{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em}
 .trio__inner{max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
 .trio__item{position:relative;aspect-ratio:3/4;overflow:hidden;cursor:pointer;background:var(--surf-e);transition:transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s cubic-bezier(.16,1,.3,1);will-change:transform;opacity:0;transform:translateY(40px)}
 .trio__item.is-revealed{opacity:1;transform:translateY(0)}
@@ -222,7 +222,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 /* --- Gallery --- */
 .gallery{padding:0 0 6rem}
 .gallery__header{max-width:var(--container);margin:0 auto;padding:4rem var(--gutter) 2rem}
-.gallery__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:.5rem}
+.gallery__title{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:.5rem}
 .gallery__subtitle{color:var(--ink-s);font-size:1rem}
 .gallery__counter{max-width:var(--container);margin:0 auto;padding:0 var(--gutter) 1.5rem;font-size:.8125rem;font-weight:500;color:var(--ink-t)}
 .gallery__indicator{text-align:right;max-width:var(--container);margin:0 auto;padding:0 var(--gutter);font-size:.6875rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-s);margin-bottom:.5rem;animation:pulse 2s infinite ease-in-out}
@@ -371,7 +371,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 /* --- Food Finder (Wizard) --- */
 .finder{padding:6rem 0}
 .finder__header{max-width:var(--container);margin:0 auto;padding:0 var(--gutter) 2.5rem;text-align:center}
-.finder__title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:.5rem}
+.finder__title{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,3.25rem);letter-spacing:-0.02em;margin-bottom:.5rem}
 .finder__subtitle{color:var(--ink-s);font-size:1rem;max-width:480px;margin:0 auto}
 
 .wizard{max-width:700px;margin:0 auto;padding:0 var(--gutter)}
@@ -566,7 +566,6 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .modal__image { view-transition-name: active-dish; }
 
 /* Custom Cursor */
-*, *::before, *::after { cursor: none !important; }
 #cursor {
   position: fixed;
   pointer-events: none;
