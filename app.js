@@ -398,6 +398,46 @@ document.addEventListener('DOMContentLoaded', () => {
       
       track.appendChild(setWrapper);
     }
+
+    // Generate quick nav
+    const quickNav = $('#gallery-quick-nav');
+    if (quickNav) {
+      quickNav.innerHTML = '';
+      ordered.forEach((dish, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'gallery__nav-dot';
+        dot.setAttribute('data-idx', i);
+        dot.setAttribute('aria-label', `Jump to dish ${i + 1}`);
+        const idxText = String(i + 1).padStart(2, '0');
+        dot.innerHTML = `<span>${idxText}</span>`;
+        
+        dot.addEventListener('click', () => {
+          const carousel = $('#gallery-carousel');
+          if (!carousel) return;
+          
+          const viewportCenter = carousel.scrollLeft + (carousel.clientWidth / 2);
+          let target = null;
+          let minDiff = Infinity;
+          
+          const allTargets = $$('.gallery__set > :nth-child(' + (i + 1) + ')', track);
+          allTargets.forEach(el => {
+            const elCenter = el.offsetLeft + (el.offsetWidth / 2);
+            const diff = Math.abs(elCenter - viewportCenter);
+            if (diff < minDiff) {
+              minDiff = diff;
+              target = el;
+            }
+          });
+          
+          if (target) {
+            const targetScroll = target.offsetLeft - (carousel.clientWidth / 2) + (target.offsetWidth / 2);
+            carousel.scrollTo({ left: targetScroll, behavior: 'smooth' });
+          }
+        });
+        
+        quickNav.appendChild(dot);
+      });
+    }
     
     // Position scroll at the middle set for infinite loop buffer
     requestAnimationFrame(() => {
@@ -432,6 +472,31 @@ document.addEventListener('DOMContentLoaded', () => {
         isResetting = true;
         galleryCarousel.scrollLeft -= setWidth;
         isResetting = false;
+      }
+
+      // Update quick nav dot
+      const quickNav = $('#gallery-quick-nav');
+      if (quickNav && quickNav.children.length) {
+        const viewportCenter = galleryCarousel.scrollLeft + (galleryCarousel.clientWidth / 2);
+        const currentSetIndex = Math.floor(viewportCenter / setWidth);
+        const activeSet = track.children[currentSetIndex];
+        
+        if (activeSet) {
+          let minDiff = Infinity;
+          let activeIndex = 0;
+          Array.from(activeSet.children).forEach((el, idx) => {
+            const elCenter = el.offsetLeft + (el.offsetWidth / 2);
+            const diff = Math.abs(elCenter - viewportCenter);
+            if (diff < minDiff) {
+              minDiff = diff;
+              activeIndex = idx;
+            }
+          });
+          
+          $$('.gallery__nav-dot', quickNav).forEach((dot, idx) => {
+            dot.classList.toggle('is-active', idx === activeIndex);
+          });
+        }
       }
     });
     

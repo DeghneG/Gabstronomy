@@ -231,6 +231,51 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .gallery__empty-title{font-family:var(--serif);font-size:1.5rem;margin-bottom:.5rem}
 .gallery__empty-sub{color:var(--ink-t);font-size:.9375rem}
 
+/* --- Quick Nav --- */
+.gallery__quick-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 1.5rem auto 0;
+  max-width: var(--container);
+  flex-wrap: wrap;
+  padding: 0 var(--gutter);
+}
+.gallery__nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border);
+  border: none;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(.16,1,.3,1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.gallery__nav-dot span {
+  opacity: 0;
+  font-size: 0.55rem;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--canvas);
+  transition: opacity 0.3s;
+}
+.gallery__nav-dot:hover {
+  background: var(--ink-s);
+  transform: scale(1.2);
+}
+.gallery__nav-dot.is-active {
+  width: 24px;
+  background: var(--ink);
+  transform: scale(1);
+}
+.gallery__nav-dot.is-active span {
+  opacity: 1;
+}
+
 /* --- Dish Card (Gallery Wall Treatment) --- */
 .dish-card{
   position:relative;
