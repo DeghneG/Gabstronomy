@@ -48,7 +48,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
   --surf:#1C1A18;
   --canvas:#141210;
   --white:#1C1A18;
-  --serif:'Ogg', 'Larken', 'Cormorant Garamond', Georgia, serif;
+  --serif:'PP Neue Montreal',system-ui,sans-serif;
   --sans:'PP Neue Montreal',system-ui,sans-serif;
   --ease:cubic-bezier(.4,0,.2,1);
   --ease-out:cubic-bezier(0,0,.2,1);
