@@ -298,7 +298,7 @@
   <!-- ============================================ -->
   <div class="modal" id="dish-modal" hidden aria-modal="true" role="dialog" aria-labelledby="modal-title">
     <div class="modal__backdrop" id="modal-backdrop"></div>
-    <div class="modal__container" id="modal-container">
+    <div class="modal__container" id="modal-container" data-lenis-prevent>
       <button class="modal__close" id="modal-close" aria-label="Close dish detail">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
@@ -307,7 +307,7 @@
       <div class="modal__image-wrap">
         <img src="" alt="" class="modal__image" id="modal-image" />
       </div>
-      <div class="modal__body">
+      <div class="modal__body" data-lenis-prevent>
         <div class="modal__meta">
           <span class="modal__cuisine" id="modal-cuisine"></span>
           <span class="modal__dot">·</span>
