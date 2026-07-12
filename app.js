@@ -321,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="dish-card__image-wrap">
           <div class="dish-card__wipe"></div>
           <img src="${dish.image}" alt="${dish.name}" class="dish-card__image" loading="lazy" />
+          <div class="dish-card__sheen"></div>
           <div class="dish-card__overlay"></div>
         </div>
       </div>
@@ -333,6 +334,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     card.addEventListener('click', () => openModal(dish, card.querySelector('.dish-card__image-wrap')));
     card.addEventListener('keydown', e => { if (e.key === 'Enter') openModal(dish, card.querySelector('.dish-card__image-wrap')); });
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const frame = card.querySelector('.dish-card__frame');
+      const sheen = card.querySelector('.dish-card__sheen');
+      const MAX_TILT = 14;
+
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+
+        const tiltX = (py - 0.5) * -MAX_TILT * 2;
+        const tiltY = (px - 0.5) * MAX_TILT * 2;
+
+        frame.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
+
+        const sheenAngle = 90 + tiltY * 3;
+        sheen.style.setProperty('--sheen-angle', sheenAngle + 'deg');
+
+        card.style.setProperty('--shadow-transform', `translateX(${tiltY * 2}px) translateY(${tiltX * -2}px) scale(${1 - Math.abs(tiltX) / 80})`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        frame.style.transform = '';
+        card.style.setProperty('--shadow-transform', 'translate(0, 0) scale(1)');
+      });
+    }
 
     revealObserver.observe(card);
     return card;
