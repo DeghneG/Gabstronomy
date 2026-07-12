@@ -103,6 +103,163 @@
   </section>
 
   <!-- ============================================ -->
+  <!-- MENU OVERVIEW                                 -->
+  <!-- ============================================ -->
+  <section class="menu-overview" id="menu-overview">
+
+    <!-- 1. Intro Paragraph Block -->
+    <div class="menu-overview__intro reveal">
+      <p class="menu-overview__intro-body">
+        Every dish on this site starts from the same place — a real kitchen, real ingredients, and the desire
+        to make something worth sitting down for. No shortcuts that compromise flavor, no recipes kept for
+        special occasions only. These are the dishes that have become part of how I cook every week.
+        Some are fiercely Filipino, others borrowed and made personal. All of them are honest.
+      </p>
+      <p class="menu-overview__intro-body">
+        Here you'll find dishes organized by protein — a practical choice, since that's usually what
+        you have or what you're working around. Each links directly into the collection so you can
+        dig further into a dish, pull up the recipe, and start cooking.
+      </p>
+      <p class="menu-overview__intro-closing reveal reveal--delay-2">
+        Thank you for being here — now let's find something good to make.
+      </p>
+    </div>
+
+    <!-- 2. Five-Image Category Grid -->
+    <div class="cat-grid" id="cat-grid" aria-label="Browse dishes by category">
+      <a class="cat-grid__tile" href="#finder" id="cat-chicken" onclick="filterByProtein('chicken')" aria-label="Explore Chicken dishes">
+        <img src="images/garlic_chicken_mushroom.png" alt="Chicken dishes" class="cat-grid__img" loading="lazy" />
+        <div class="cat-grid__overlay"></div>
+        <div class="cat-grid__caption">
+          <span class="cat-grid__name">Chicken</span>
+          <span class="cat-grid__sub">See Dishes →</span>
+        </div>
+      </a>
+      <a class="cat-grid__tile" href="#finder" id="cat-pork" onclick="filterByProtein('pork')" aria-label="Explore Pork dishes">
+        <img src="images/sweet_and_spicy_pork_ribs.png" alt="Pork dishes" class="cat-grid__img" loading="lazy" />
+        <div class="cat-grid__overlay"></div>
+        <div class="cat-grid__caption">
+          <span class="cat-grid__name">Pork</span>
+          <span class="cat-grid__sub">See Dishes →</span>
+        </div>
+      </a>
+      <a class="cat-grid__tile" href="#finder" id="cat-beef" onclick="filterByProtein('beef')" aria-label="Explore Beef dishes">
+        <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&q=80" alt="Beef dishes" class="cat-grid__img" loading="lazy" />
+        <div class="cat-grid__overlay"></div>
+        <div class="cat-grid__caption">
+          <span class="cat-grid__name">Beef</span>
+          <span class="cat-grid__sub">See Dishes →</span>
+        </div>
+      </a>
+      <a class="cat-grid__tile" href="#finder" id="cat-seafood" onclick="filterByProtein('fish')" aria-label="Explore Seafood dishes">
+        <img src="images/sinabawang_isda.png" alt="Seafood dishes" class="cat-grid__img" loading="lazy" />
+        <div class="cat-grid__overlay"></div>
+        <div class="cat-grid__caption">
+          <span class="cat-grid__name">Seafood</span>
+          <span class="cat-grid__sub">See Dishes →</span>
+        </div>
+      </a>
+      <a class="cat-grid__tile" href="#finder" id="cat-vegan" onclick="filterByProtein('none')" aria-label="Explore Vegan dishes">
+        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80" alt="Vegan dishes" class="cat-grid__img" loading="lazy" />
+        <div class="cat-grid__overlay"></div>
+        <div class="cat-grid__caption">
+          <span class="cat-grid__name">Vegan</span>
+          <span class="cat-grid__sub">See Dishes →</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 3. Section Header -->
+    <div class="menu-overview__header reveal">
+      <span class="menu-overview__eyebrow">EXPLORE</span>
+      <h2 class="menu-overview__heading">Our Menu</h2>
+      <p class="menu-overview__header-sub">A collection of dishes — each one cooked, tested, and worth returning to.</p>
+      <div class="menu-overview__divider-mark" aria-hidden="true"></div>
+    </div>
+
+    <!-- 4. Category Label -->
+    <div class="menu-overview__label reveal">
+      <span class="menu-overview__label-text">DISHES</span>
+      <p class="menu-overview__label-sub">Click any dish to open the full recipe and preparation steps.</p>
+    </div>
+
+    <!-- 5. Numbered Menu List -->
+    <div class="menu-list" id="menu-list">
+      <div class="menu-list__item reveal" onclick="openModal('chicken-adobo')" role="button" tabindex="0" aria-label="View Chicken Adobo recipe">
+        <span class="menu-list__num">01</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Chicken Adobo</span>
+          <span class="menu-list__desc">Soy · Vinegar · Garlic · Bay Leaf — slow-braised until deeply savory</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal reveal--delay-1" onclick="openModal('garlic-chicken-mushroom')" role="button" tabindex="0" aria-label="View Garlic Chicken Mushroom recipe">
+        <span class="menu-list__num">02</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Garlic Chicken Mushroom</span>
+          <span class="menu-list__desc">Chicken · Mushroom · Butter · Oyster Sauce — seared with cold-start garlic</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal reveal--delay-2" onclick="openModal('chicken-cordon-bleu')" role="button" tabindex="0" aria-label="View Chicken Cordon Bleu recipe">
+        <span class="menu-list__num">03</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Chicken Cordon Bleu</span>
+          <span class="menu-list__desc">Chicken Breast · Ham · Cheese · Breadcrumbs — golden-fried and gooey</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal" onclick="openModal('bicol-express')" role="button" tabindex="0" aria-label="View Bicol Express recipe">
+        <span class="menu-list__num">04</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Bicol Express</span>
+          <span class="menu-list__desc">Pork · Coconut Milk · Siling Labuyo · Garlic — spicy, creamy, fiery</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal reveal--delay-1" onclick="openModal('sweet-and-spicy-pork-ribs')" role="button" tabindex="0" aria-label="View Sweet and Spicy Pork Ribs recipe">
+        <span class="menu-list__num">05</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Sweet &amp; Spicy Pork Ribs</span>
+          <span class="menu-list__desc">Pork Ribs · Tomato Paste · Chili Powder · Bell Pepper — sticky slow braise</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal reveal--delay-2" onclick="openModal('pork-binagoongan')" role="button" tabindex="0" aria-label="View Pork Binagoongan recipe">
+        <span class="menu-list__num">06</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Pork Binagoongan</span>
+          <span class="menu-list__desc">Pork · Bagoong · Eggplant · Tomato — fermented depth, smoky finish</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal" onclick="openModal('sinabawang-isda')" role="button" tabindex="0" aria-label="View Sinabawang Isda recipe">
+        <span class="menu-list__num">07</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Sinabawang Isda</span>
+          <span class="menu-list__desc">Fish · Tomato · Ginger · Kamote Leaves — clean broth, delicate kick</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal reveal--delay-1" onclick="openModal('bangus-steak')" role="button" tabindex="0" aria-label="View Bangus Steak recipe">
+        <span class="menu-list__num">08</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Bangus Steak</span>
+          <span class="menu-list__desc">Milkfish · Soy · Calamansi · Toasted Garlic — tangy, fried, savory</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal reveal--delay-2" onclick="openModal('sweet-and-sour-bukaw')" role="button" tabindex="0" aria-label="View Sweet and Sour Bukaw recipe">
+        <span class="menu-list__num">09</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Sweet &amp; Sour Bukaw</span>
+          <span class="menu-list__desc">Fish · Pineapple · Bell Pepper · Ketchup — vibrant, crispy, tangy</span>
+        </div>
+      </div>
+      <div class="menu-list__item reveal" onclick="openModal('chicken-tinola')" role="button" tabindex="0" aria-label="View Chicken Tinola recipe">
+        <span class="menu-list__num">10</span>
+        <div class="menu-list__body">
+          <span class="menu-list__name">Chicken Tinola</span>
+          <span class="menu-list__desc">Chicken · Ginger · Sayote · Malunggay — restorative ginger broth</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================ -->
   <!-- SECTION DIVIDER                               -->
   <!-- ============================================ -->
   <div class="divider" aria-hidden="true">

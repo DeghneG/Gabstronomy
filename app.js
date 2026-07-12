@@ -581,6 +581,9 @@ document.addEventListener('DOMContentLoaded', () => {
   modalBackdrop.addEventListener('click', closeModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
+  // Expose openModal globally (called from menu-list and trio inline onclick)
+  window.openModal = openModal;
+
   // ---- FOOD FINDER (STEP-BY-STEP) ----
   const finderWizard = $('#finder-wizard');
   const resultsView = $('#finder-results-view');
@@ -602,6 +605,19 @@ document.addEventListener('DOMContentLoaded', () => {
     vegetables: [],
     spices: []
   };
+
+  // filterByProtein event handler — called from category grid tiles
+  document.addEventListener('gabstronomy:filterByProtein', (e) => {
+    const { protein } = e.detail;
+    wizardState.protein = protein;
+    wizardState.vegetables = [];
+    wizardState.spices = [];
+    finderWizard.hidden = true;
+    resultsView.hidden = false;
+    renderFinderResults();
+    const finderEl = document.getElementById('finder');
+    if (finderEl) lenis.scrollTo(finderEl, { offset: -20 });
+  });
 
   // Setup options interactions
   $$('.wizard__opt').forEach(opt => {
@@ -882,3 +898,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ---- GLOBAL HELPERS (accessible from inline onclick) ----
+
+// openModal is called from inline onclick on trio items & menu list — bridge into the closure
+window.openModal = function(dishId) {
+  const dish = DISHES.find(d => d.id === dishId);
+  if (!dish) return;
+  // Dispatch a custom event the closure listens to
+  document.dispatchEvent(new CustomEvent('gabstronomy:openModal', { detail: { dish } }));
+};
+
+// filterByProtein: pre-fills the Finder wizard protein selection and scrolls to results
+window.filterByProtein = function(protein) {
+  // We need to wait for DOMContentLoaded (should already have fired)
+  const finderSection = document.getElementById('finder');
+  const finderWizard = document.getElementById('finder-wizard');
+  const resultsView = document.getElementById('finder-results-view');
+  if (!finderSection) return;
+
+  // Reset wizard state selections
+  document.querySelectorAll('.wizard__opt').forEach(opt => opt.classList.remove('is-selected'));
+  document.querySelectorAll('[data-val="none"]').forEach(opt => opt.classList.add('is-selected'));
+
+  // Select the matching protein option
+  const proteinOpt = document.querySelector(`.wizard__opt[data-val="${protein}"]`);
+  if (proteinOpt) {
+    // Deselect 'none' in protein group
+    const noneInGroup = proteinOpt.parentElement.querySelector('[data-val="none"]');
+    if (noneInGroup) noneInGroup.classList.remove('is-selected');
+    proteinOpt.classList.add('is-selected');
+  }
+
+  // Dispatch a custom event to let app.js handle state
+  document.dispatchEvent(new CustomEvent('gabstronomy:filterByProtein', { detail: { protein } }));
+};
