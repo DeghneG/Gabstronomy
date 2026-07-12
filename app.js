@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }));
 
   // Active nav link on scroll
-  const sections = ['hero', 'gallery', 'finder'];
+  const sections = ['hero', 'finder'];
   const navLinks = $$('.nav__link');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {

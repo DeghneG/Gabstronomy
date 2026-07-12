@@ -24,7 +24,6 @@
       <a href="#hero" class="nav__wordmark" id="nav-logo">Gabstronomy</a>
       <div class="nav__right-zone">
         <nav class="nav__links nav__links--right" id="nav-links-right">
-          <a href="#gallery" class="nav__link" id="nav-gallery">Gallery</a>
           <a href="#finder" class="nav__link" id="nav-finder">Finder</a>
         </nav>
         <button class="nav__burger" id="nav-burger" aria-label="Toggle navigation menu">
@@ -35,7 +34,6 @@
     <!-- Mobile menu overlay -->
     <div class="nav__mobile" id="nav-mobile">
       <a href="#about" class="nav__mobile-link">About</a>
-      <a href="#gallery" class="nav__mobile-link">Gallery</a>
       <a href="#finder" class="nav__mobile-link">Finder</a>
     </div>
   </header>
@@ -262,83 +260,11 @@
   <!-- ============================================ -->
   <!-- SECTION DIVIDER                               -->
   <!-- ============================================ -->
-  <div class="divider" aria-hidden="true">
+  <div class="divider reveal" aria-hidden="true">
     <span class="divider__line"></span>
     <span class="divider__mark">✦</span>
     <span class="divider__line"></span>
   </div>
-
-  <!-- ============================================ -->
-  <!-- TRIO GRID                                    -->
-  <!-- ============================================ -->
-  <section class="trio" id="featured">
-    <div class="trio__header">
-      <h2 class="trio__title reveal">My Top 3</h2>
-    </div>
-    <div class="trio__inner">
-      <div class="trio__item" onclick="openModal('garlic-chicken-mushroom')">
-        <div class="trio__image-wrap">
-          <img src="images/garlic_chicken_mushroom.png" alt="Garlic Chicken Mushroom" class="trio__image" loading="lazy" />
-        </div>
-        <div class="trio__content">
-          <h3 class="trio__name">Garlic Chicken Mushroom</h3>
-          <p class="trio__desc">Crispy seared chicken with earthy mushrooms.</p>
-        </div>
-      </div>
-      <div class="trio__item" onclick="openModal('sweet-and-spicy-pork-ribs')">
-        <div class="trio__image-wrap">
-          <img src="images/sweet_and_spicy_pork_ribs.png" alt="Sweet and Spicy Pork Ribs" class="trio__image" loading="lazy" />
-        </div>
-        <div class="trio__content">
-          <h3 class="trio__name">Sweet and Spicy Pork Ribs</h3>
-          <p class="trio__desc">Sticky, savory, and perfectly tender.</p>
-        </div>
-      </div>
-      <div class="trio__item" onclick="openModal('sweet-and-sour-bukaw')">
-        <div class="trio__image-wrap">
-          <img src="images/sweet_and_sour_bukaw.png" alt="Sweet and Sour Bukaw" class="trio__image" loading="lazy" />
-        </div>
-        <div class="trio__content">
-          <h3 class="trio__name">Sweet and Sour Bukaw</h3>
-          <p class="trio__desc">A delightful balance of sweet, sour, and savory.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-  <!-- ============================================ -->
-  <!-- FOOD GALLERY                                  -->
-  <!-- ============================================ -->
-  <section class="gallery" id="gallery">
-    <div class="gallery__header">
-      <div class="gallery__header-text">
-        <div class="gallery__header-top" style="display:flex; justify-content:space-between; align-items:flex-end;">
-          <div>
-            <h2 class="gallery__title reveal">The Collection</h2>
-            <p class="gallery__subtitle reveal reveal--delay-1">A curated selection of dishes worth making — and making again.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Carousel -->
-    <div class="gallery__indicator" aria-hidden="true">Scroll to explore &rarr;</div>
-    <div class="gallery__carousel" id="gallery-carousel">
-      <div class="gallery__track" id="gallery-track">
-        <!-- Populated by JS -->
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div class="gallery__empty" id="gallery-empty" hidden>
-      <p class="gallery__empty-title">No dishes match these filters</p>
-      <p class="gallery__empty-sub">Try removing a filter or exploring a different combination.</p>
-    </div>
-  </section>
-
-
 
   <!-- ============================================ -->
   <!-- FOOD FINDER (STEP-BY-STEP)                    -->
