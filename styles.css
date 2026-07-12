@@ -195,7 +195,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 .menu-overview__intro-closing{font-size:1.0625rem;color:var(--ink-t);font-style:italic;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border-l)}
 
 /* Category Grid */
-.cat-grid{display:flex;width:100%;max-width:var(--container);margin:0 auto;padding:0 var(--gutter);height:auto;gap:1.5rem;overflow:hidden}
+.cat-grid{display:flex;width:100%;max-width:var(--container);margin:0 auto;padding:0 var(--gutter);height:auto;gap:0.75rem;overflow:hidden}
 .cat-grid__item{display:flex;flex-direction:column;flex:1;text-decoration:none;gap:1rem;cursor:pointer}
 .cat-grid__tile{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:12px}
 .cat-grid__img{width:100%;height:100%;object-fit:cover;transition:transform 0.8s cubic-bezier(.16,1,.3,1),filter 0.6s var(--ease);filter:grayscale(100%) brightness(0.85)}
@@ -213,7 +213,7 @@ input{border:none;outline:none;font:inherit;background:none;color:inherit}
 
 /* Category Label */
 .menu-overview__label{text-align:center;padding:0 var(--gutter) 2.5rem;max-width:var(--container);margin:0 auto}
-.menu-overview__label-text{display:block;font-family:var(--sans);font-size:0.75rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink);margin-bottom:0.5rem}
+.menu-overview__label-text{display:block;font-family:var(--sans);font-size:1.125rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink);margin-bottom:0.5rem}
 .menu-overview__label-sub{font-size:0.9rem;color:var(--ink-t)}
 
 /* Menu List */
